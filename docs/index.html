@@ -574,6 +574,60 @@
       content: ' — 省エネ';
       color: var(--yellow);
     }
+
+    /* ─── SYNC BADGE ─── */
+    .sync-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      padding: 5px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: var(--card2);
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-user-select: none;
+    }
+    .sync-badge:active { opacity: 0.7; }
+    .sync-badge .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); transition: background 0.3s; }
+    .sync-badge.synced .sync-dot { background: var(--green); }
+    .sync-badge.syncing .sync-dot { background: var(--yellow); animation: pulse 1s infinite; }
+    .sync-badge.error .sync-dot { background: var(--red); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0));
+      width: 100%; max-width: 500px;
+      transform: translateY(20px); transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+    .modal-label { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .modal-input {
+      width: 100%; background: var(--card2); border: 1px solid var(--border2);
+      border-radius: var(--radius-sm); padding: 12px 14px;
+      font-size: 14px; color: var(--text); font-family: inherit; outline: none;
+      margin-bottom: 14px; transition: border-color 0.2s;
+    }
+    .modal-input:focus { border-color: var(--accent); }
+    .modal-hint { font-size: 12px; color: var(--text3); margin-top: -10px; margin-bottom: 14px; line-height: 1.5; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -584,11 +638,34 @@
     <h1>Personal OS</h1>
     <div class="date-str" id="header-date"></div>
   </div>
-  <div class="mode-toggle" id="mode-toggle" onclick="toggleMode()">
-    <div class="mode-dot"></div>
-    <span id="mode-label">通常モード</span>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="sync-badge" id="sync-badge" onclick="openSettings()">
+      <div class="sync-dot"></div>
+      <span id="sync-label">同期</span>
+    </div>
+    <div class="mode-toggle" id="mode-toggle" onclick="toggleMode()">
+      <div class="mode-dot"></div>
+      <span id="mode-label">通常モード</span>
+    </div>
   </div>
 </header>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal" onclick="closeSettingsIfOutside(event)">
+  <div class="modal">
+    <div class="modal-title">⚙️ Gist同期設定</div>
+    <div class="modal-label">GitHub Token（gistスコープ）</div>
+    <input class="modal-input" type="password" id="cfg-token" placeholder="ghp_またはgho_から始まるトークン" />
+    <div class="modal-hint">GitHub → Settings → Developer settings → Personal access tokens → <strong>gist</strong> にチェック</div>
+    <div class="modal-label">Gist ID（自動設定済み）</div>
+    <input class="modal-input" type="text" id="cfg-gist" placeholder="Gist ID" />
+    <div class="modal-hint">変更不要。別のGistに切り替えたい場合のみ編集。</div>
+    <div class="modal-actions">
+      <button class="btn" style="flex:1" onclick="saveSettings()">保存して同期</button>
+      <button class="btn btn-ghost" onclick="closeSettings()">キャンセル</button>
+    </div>
+  </div>
+</div>
 
 <!-- SAVE INDICATOR -->
 <div id="save-indicator">保存しました ✓</div>
@@ -915,6 +992,9 @@
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────
 const DATA_KEY = 'personal_os_v1';
+const CFG_TOKEN = 'personal_os_token';
+const CFG_GIST  = 'personal_os_gist';
+const DEFAULT_GIST_ID = '257773ea1a3c5e443329f8ed0a7584a0';
 const HABITS = ['gym','meal','sleep','mouth','cia','water'];
 const HABIT_NAMES = {gym:'ジム',meal:'食事管理',sleep:'7h睡眠',mouth:'マウスピース',cia:'CIA学習',water:'水2L'};
 
@@ -930,6 +1010,7 @@ function loadData() {
 function saveData(data) {
   localStorage.setItem(DATA_KEY, JSON.stringify(data));
   showSaveIndicator();
+  scheduleGistSync();
 }
 
 function showSaveIndicator() {
@@ -939,9 +1020,97 @@ function showSaveIndicator() {
   el._t = setTimeout(() => el.classList.remove('show'), 1500);
 }
 
+// ─── GIST SYNC ────────────────────────────────────────────────────────────
+let _syncTimer = null;
+
+function getGistConfig() {
+  const token = localStorage.getItem(CFG_TOKEN) || '';
+  const gistId = localStorage.getItem(CFG_GIST) || DEFAULT_GIST_ID;
+  return { token, gistId };
+}
+
+function setSyncStatus(status, label) {
+  const badge = document.getElementById('sync-badge');
+  const lbl = document.getElementById('sync-label');
+  badge.className = `sync-badge ${status}`;
+  lbl.textContent = label;
+}
+
+function scheduleGistSync() {
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(syncToGist, 2000);
+}
+
+async function syncToGist() {
+  const { token, gistId } = getGistConfig();
+  if (!token) { setSyncStatus('', '未設定'); return; }
+  setSyncStatus('syncing', '同期中...');
+  try {
+    const data = loadData();
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files: { 'personal_os_data.json': { content: JSON.stringify(data) } } })
+    });
+    if (!res.ok) throw new Error(res.status);
+    setSyncStatus('synced', '同期済み ✓');
+  } catch(e) {
+    setSyncStatus('error', 'エラー');
+  }
+}
+
+async function loadFromGist() {
+  const { token, gistId } = getGistConfig();
+  if (!token) { setSyncStatus('', '未設定'); return; }
+  setSyncStatus('syncing', '読込中...');
+  try {
+    const headers = { 'Authorization': `token ${token}` };
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
+    if (!res.ok) throw new Error(res.status);
+    const json = await res.json();
+    const content = json.files['personal_os_data.json']?.content;
+    if (content) {
+      const remote = JSON.parse(content);
+      // Merge: prefer remote for dates, keep local for config keys
+      const local = loadData();
+      const merged = Object.assign({}, local, remote);
+      localStorage.setItem(DATA_KEY, JSON.stringify(merged));
+    }
+    setSyncStatus('synced', '同期済み ✓');
+  } catch(e) {
+    setSyncStatus('error', 'エラー');
+  }
+}
+
+// ─── SETTINGS MODAL ───────────────────────────────────────────────────────
+function openSettings() {
+  const { token, gistId } = getGistConfig();
+  document.getElementById('cfg-token').value = token;
+  document.getElementById('cfg-gist').value = gistId || DEFAULT_GIST_ID;
+  document.getElementById('settings-modal').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function closeSettingsIfOutside(e) {
+  if (e.target === document.getElementById('settings-modal')) closeSettings();
+}
+
+function saveSettings() {
+  const token = document.getElementById('cfg-token').value.trim();
+  const gistId = document.getElementById('cfg-gist').value.trim() || DEFAULT_GIST_ID;
+  if (token) localStorage.setItem(CFG_TOKEN, token);
+  localStorage.setItem(CFG_GIST, gistId);
+  closeSettings();
+  loadFromGist().then(() => loadAll());
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setHeaderDate();
+  await loadFromGist();
   loadAll();
   renderWeeklyGrid();
   updateStats();
