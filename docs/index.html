@@ -660,6 +660,7 @@
     <div class="modal-label">Gist ID（自動設定済み）</div>
     <input class="modal-input" type="text" id="cfg-gist" placeholder="Gist ID" />
     <div class="modal-hint">変更不要。別のGistに切り替えたい場合のみ編集。</div>
+    <div id="sync-error-msg" style="font-size:12px;color:var(--red);min-height:16px;margin-bottom:8px;word-break:break-all"></div>
     <div class="modal-actions">
       <button class="btn" style="flex:1" onclick="saveSettings()">保存して同期</button>
       <button class="btn btn-ghost" onclick="closeSettings()">キャンセル</button>
@@ -1052,10 +1053,15 @@ async function syncToGist() {
       headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ files: { 'personal_os_data.json': { content: JSON.stringify(data) } } })
     });
-    if (!res.ok) throw new Error(res.status);
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({message:res.status}));
+      throw new Error(`${res.status}: ${err.message}`);
+    }
     setSyncStatus('synced', '同期済み ✓');
   } catch(e) {
+    console.error('Gist sync error:', e.message);
     setSyncStatus('error', 'エラー');
+    document.getElementById('sync-error-msg').textContent = e.message;
   }
 }
 
@@ -1064,21 +1070,26 @@ async function loadFromGist() {
   if (!token) { setSyncStatus('', '未設定'); return; }
   setSyncStatus('syncing', '読込中...');
   try {
-    const headers = { 'Authorization': `token ${token}` };
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, { headers });
-    if (!res.ok) throw new Error(res.status);
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(()=>({message:res.status}));
+      throw new Error(`${res.status}: ${err.message}`);
+    }
     const json = await res.json();
     const content = json.files['personal_os_data.json']?.content;
     if (content) {
       const remote = JSON.parse(content);
-      // Merge: prefer remote for dates, keep local for config keys
       const local = loadData();
       const merged = Object.assign({}, local, remote);
       localStorage.setItem(DATA_KEY, JSON.stringify(merged));
     }
     setSyncStatus('synced', '同期済み ✓');
   } catch(e) {
+    console.error('Gist load error:', e.message);
     setSyncStatus('error', 'エラー');
+    document.getElementById('sync-error-msg').textContent = e.message;
   }
 }
 
