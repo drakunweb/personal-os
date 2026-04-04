@@ -628,6 +628,114 @@
     .modal-input:focus { border-color: var(--accent); }
     .modal-hint { font-size: 12px; color: var(--text3); margin-top: -10px; margin-bottom: 14px; line-height: 1.5; }
     .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+    /* ─── AI AGENT CARD ─── */
+    .ai-card {
+      border: 2px dashed var(--border2);
+      border-radius: var(--radius);
+      padding: 16px;
+      position: relative;
+      background: linear-gradient(135deg, rgba(124,58,237,0.04), transparent);
+    }
+    .ai-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--accent); background: rgba(124,58,237,0.12);
+      border-radius: 99px; padding: 3px 10px; margin-bottom: 10px;
+    }
+    .ai-content {
+      font-size: 13px; color: var(--text2); line-height: 1.7;
+      min-height: 60px; white-space: pre-wrap;
+    }
+    .ai-content:empty::before { content: 'AIエージェントが自動更新します...'; color: var(--text3); font-style: italic; }
+    .ai-updated { font-size: 11px; color: var(--text3); margin-top: 8px; }
+
+    /* ─── SHOPPING LIST ─── */
+    .shop-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 14px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .shop-item.done { opacity: 0.45; }
+    .shop-item.done .shop-name { text-decoration: line-through; color: var(--text3); }
+    .shop-check {
+      width: 22px; height: 22px; border: 2px solid var(--border2);
+      border-radius: 6px; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; transition: all 0.15s;
+    }
+    .shop-check.checked { background: var(--green); border-color: var(--green); }
+    .shop-check.checked::after { content: '✓'; font-size: 13px; color: #fff; font-weight: 700; }
+    .shop-name { flex: 1; font-size: 14px; color: var(--text); }
+    .shop-price { font-size: 12px; color: var(--text3); white-space: nowrap; }
+    .shop-tag {
+      font-size: 10px; font-weight: 700; padding: 2px 8px;
+      border-radius: 99px; white-space: nowrap;
+    }
+    .tag-must { background: var(--red-dim); color: var(--red); }
+    .tag-want { background: var(--blue-dim); color: var(--blue); }
+    .tag-someday { background: var(--card2); color: var(--text3); border: 1px solid var(--border); }
+
+    /* ─── ADD ITEM ROW ─── */
+    .add-row {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .add-input {
+      flex: 1; background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 12px;
+      font-size: 13px; color: var(--text); font-family: inherit; outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-input:focus { border-color: var(--accent); }
+    .add-btn {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: var(--radius-sm); padding: 10px 16px;
+      font-size: 20px; cursor: pointer; transition: all 0.15s; line-height: 1;
+    }
+    .add-btn:active { transform: scale(0.93); }
+
+    /* ─── FINANCE ROWS ─── */
+    .fin-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .fin-row:last-child { border-bottom: none; }
+    .fin-label { font-size: 14px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+    .fin-val { font-size: 16px; font-weight: 700; }
+    .fin-sub { font-size: 11px; color: var(--text3); }
+    .fin-input-inline {
+      background: none; border: none; border-bottom: 1px solid var(--border2);
+      color: var(--text); font-size: 16px; font-weight: 700; width: 80px;
+      outline: none; text-align: right; font-family: inherit;
+    }
+
+    /* ─── STATUS PILL ─── */
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700; padding: 4px 10px;
+      border-radius: 99px;
+    }
+    .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .pill-green { background: var(--green-dim); color: var(--green); }
+    .pill-green::before { background: var(--green); }
+    .pill-yellow { background: var(--yellow-dim); color: var(--yellow); }
+    .pill-yellow::before { background: var(--yellow); }
+    .pill-red { background: var(--red-dim); color: var(--red); }
+    .pill-red::before { background: var(--red); }
+
+    /* ─── SITE CARD ─── */
+    .site-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 10px;
+    }
+    .site-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .site-name { font-size: 15px; font-weight: 700; }
+    .site-url { font-size: 12px; color: var(--text3); margin-top: 1px; }
+    .site-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+    .site-metric { background: var(--card2); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+    .site-metric-val { font-size: 18px; font-weight: 700; }
+    .site-metric-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -705,6 +813,10 @@
     <div class="tab" onclick="switchTab('health')">💪 健康</div>
     <div class="tab" onclick="switchTab('goals')">🎯 目標</div>
     <div class="tab" onclick="switchTab('weekly')">📅 週間</div>
+    <div class="tab" onclick="switchTab('finance')">💴 財務</div>
+    <div class="tab" onclick="switchTab('shopping')">🛒 リスト</div>
+    <div class="tab" onclick="switchTab('style')">👔 スタイル</div>
+    <div class="tab" onclick="switchTab('side')">💼 副業</div>
   </div>
 
   <!-- TAB: TODAY -->
@@ -988,6 +1100,240 @@
 
   </div>
 
+  <!-- TAB: FINANCE -->
+  <div class="tab-content" id="tab-finance">
+
+    <div class="section-title">今月の収支</div>
+    <div class="card">
+      <div class="fin-row">
+        <div class="fin-label">💰 月収（手取り）</div>
+        <div style="text-align:right">
+          <div class="fin-val" style="color:var(--green)">
+            <input class="fin-input-inline" type="number" id="fin-income" placeholder="380000" oninput="saveFinanceDetail()" style="width:100px;color:var(--green)" />
+            <span style="font-size:12px;font-weight:400;color:var(--text3)"> 円</span>
+          </div>
+          <div class="fin-sub">変動あり（30〜45万）</div>
+        </div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-label">🏠 住宅ローン</div>
+        <div class="fin-val" style="color:var(--red)">−130,000 <span style="font-size:12px;font-weight:400;color:var(--text3)">円</span></div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-label">📈 投資積立</div>
+        <div class="fin-val" style="color:var(--blue)">−130,000 <span style="font-size:12px;font-weight:400;color:var(--text3)">円</span></div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-label">🛒 変動費</div>
+        <div style="text-align:right">
+          <div class="fin-val" style="color:var(--yellow)">
+            −<input class="fin-input-inline" type="number" id="fin-variable" placeholder="80000" oninput="saveFinanceDetail()" style="color:var(--yellow)" />
+            <span style="font-size:12px;font-weight:400;color:var(--text3)"> 円</span>
+          </div>
+        </div>
+      </div>
+      <div class="fin-row" style="border-top: 1px solid var(--border);margin-top:4px;padding-top:16px">
+        <div class="fin-label" style="font-weight:700;color:var(--text)">💵 手残り</div>
+        <div class="fin-val" id="fin-remaining" style="color:var(--green);font-size:20px">— 円</div>
+      </div>
+    </div>
+
+    <div class="section-title">資産スナップショット</div>
+    <div class="grid grid-2">
+      <div class="metric-input-card">
+        <div class="card-label">投資信託</div>
+        <div style="display:flex;align-items:baseline;gap:4px">
+          <input class="metric-input" type="number" id="asset-invest" placeholder="0" oninput="saveAssets()" style="font-size:24px" />
+          <span class="metric-unit">万円</span>
+        </div>
+        <div class="card-sub">積立13万/月</div>
+      </div>
+      <div class="metric-input-card">
+        <div class="card-label">現金・預金</div>
+        <div style="display:flex;align-items:baseline;gap:4px">
+          <input class="metric-input" type="number" id="asset-cash" placeholder="0" oninput="saveAssets()" style="font-size:24px" />
+          <span class="metric-unit">万円</span>
+        </div>
+        <div class="card-sub">生活防衛資金含む</div>
+      </div>
+      <div class="metric-input-card">
+        <div class="card-label">不動産（マンション）</div>
+        <div style="display:flex;align-items:baseline;gap:4px">
+          <input class="metric-input" type="number" id="asset-property" placeholder="5500" oninput="saveAssets()" style="font-size:24px" />
+          <span class="metric-unit">万円</span>
+        </div>
+        <div class="card-sub">購入価格ベース</div>
+      </div>
+      <div class="metric-input-card">
+        <div class="card-label">純資産合計</div>
+        <div style="display:flex;align-items:baseline;gap:4px">
+          <div class="metric-input" id="asset-net" style="font-size:24px;color:var(--green)">—</div>
+          <span class="metric-unit">万円</span>
+        </div>
+        <div class="card-sub" id="asset-net-sub">自動計算</div>
+      </div>
+    </div>
+
+    <div class="section-title">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Financial Advisor Agent</div>
+      <div class="ai-content" id="ai-finance-content">今月の支出傾向：変動費が先月比 +8%。食費・交際費が主な増加要因と推測されます。投資積立は継続中。独立資金目標まで約24ヶ月のペース。</div>
+      <div class="ai-updated" id="ai-finance-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+
+  </div>
+
+  <!-- TAB: SHOPPING -->
+  <div class="tab-content" id="tab-shopping">
+
+    <div class="section-title">買うべきもの</div>
+    <div id="must-list"></div>
+    <div class="add-row">
+      <input class="add-input" id="must-input" placeholder="アイテム名（例: プロテイン）" onkeydown="if(event.key==='Enter')addShopItem('must')" />
+      <input class="add-input" id="must-price" placeholder="金額" type="number" style="width:90px" />
+      <button class="add-btn" onclick="addShopItem('must')">+</button>
+    </div>
+
+    <div class="section-title" style="margin-top:20px">ウィッシュリスト</div>
+    <div id="want-list"></div>
+    <div class="add-row">
+      <input class="add-input" id="want-input" placeholder="欲しいもの（例: Apple Watch）" onkeydown="if(event.key==='Enter')addShopItem('want')" />
+      <input class="add-input" id="want-price" placeholder="金額" type="number" style="width:90px" />
+      <button class="add-btn" onclick="addShopItem('want')">+</button>
+    </div>
+
+    <div class="section-title" style="margin-top:20px">いつか欲しいもの</div>
+    <div id="someday-list"></div>
+    <div class="add-row">
+      <input class="add-input" id="someday-input" placeholder="将来的に検討（例: カメラ）" onkeydown="if(event.key==='Enter')addShopItem('someday')" />
+      <input class="add-input" id="someday-price" placeholder="金額" type="number" style="width:90px" />
+      <button class="add-btn" onclick="addShopItem('someday')">+</button>
+    </div>
+
+    <div class="section-title" style="margin-top:20px">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Shopping Advisor Agent</div>
+      <div class="ai-content" id="ai-shop-content">おすすめ購入タイミング：プロテインはAmazonセール期間中（月初）が最安値になる傾向あり。トレーニングシューズは現在のリストに追加を推奨。予算内で優先順位の高いアイテムから購入することを提案。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+
+  </div>
+
+  <!-- TAB: STYLE -->
+  <div class="tab-content" id="tab-style">
+
+    <div class="section-title">今日のコーデ</div>
+    <div class="card">
+      <div class="card-label">メモ</div>
+      <textarea class="notes-area" id="outfit-today" placeholder="例: ネイビースーツ + 白シャツ + ブラウンベルト" rows="3" oninput="saveStyleNote()"></textarea>
+    </div>
+
+    <div class="section-title">AIスタイルアドバイス</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Style Advisor Agent</div>
+      <div class="ai-content" id="ai-style-content">【今週のアドバイス】監査法人勤務のビジネスカジュアルとして、ネイビー・グレー・チャコールのスーツを基軸に。清潔感が信頼につながる職場では、シャツの色は白・ライトブルーが◎。週末はオフホワイトのシャツ＋ダークデニムでスマートカジュアルに。178cm体型には縦ラインを強調するVネックも有効。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+
+    <div class="section-title">シーズン別コーデノート</div>
+    <div class="grid grid-2">
+      <div class="card" style="cursor:pointer" onclick="editSeasonNote('spring')">
+        <div class="card-label">🌸 春</div>
+        <div class="card-sub" id="season-spring" style="font-size:13px;color:var(--text2);line-height:1.6">ライトジャケット、薄手ニット</div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="editSeasonNote('summer')">
+        <div class="card-label">☀️ 夏</div>
+        <div class="card-sub" id="season-summer" style="font-size:13px;color:var(--text2);line-height:1.6">リネンシャツ、スラックス</div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="editSeasonNote('autumn')">
+        <div class="card-label">🍂 秋</div>
+        <div class="card-sub" id="season-autumn" style="font-size:13px;color:var(--text2);line-height:1.6">コーデュロイ、レイヤード</div>
+      </div>
+      <div class="card" style="cursor:pointer" onclick="editSeasonNote('winter')">
+        <div class="card-label">❄️ 冬</div>
+        <div class="card-sub" id="season-winter" style="font-size:13px;color:var(--text2);line-height:1.6">ウールコート、タートルネック</div>
+      </div>
+    </div>
+
+    <div class="section-title">ブランド・アイテムメモ</div>
+    <textarea class="notes-area" id="brand-notes" placeholder="気になるブランド、買おうと思っているアイテム、サイズメモなど..." rows="4" oninput="saveBrandNote()"></textarea>
+
+  </div>
+
+  <!-- TAB: SIDE BUSINESS -->
+  <div class="tab-content" id="tab-side">
+
+    <div class="section-title">Webサイト更新状況</div>
+    <div class="site-card">
+      <div class="site-header">
+        <div>
+          <div class="site-name" id="site1-name">ポートフォリオサイト</div>
+          <div class="site-url" id="site1-url">example.com</div>
+        </div>
+        <span class="status-pill pill-green" id="site1-status">稼働中</span>
+      </div>
+      <div class="site-metrics">
+        <div class="site-metric">
+          <div class="site-metric-val" id="site1-pv" style="color:var(--blue)">—</div>
+          <div class="site-metric-label">月間PV</div>
+        </div>
+        <div class="site-metric">
+          <div class="site-metric-val" id="site1-updated" style="color:var(--yellow)">—</div>
+          <div class="site-metric-label">最終更新</div>
+        </div>
+        <div class="site-metric">
+          <div class="site-metric-val" id="site1-rev" style="color:var(--green)">—</div>
+          <div class="site-metric-label">今月収益</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">副業収益トラッキング</div>
+    <div class="card">
+      <div class="fin-row">
+        <div class="fin-label">📅 今月の副業収益</div>
+        <div style="text-align:right">
+          <input class="fin-input-inline" type="number" id="side-income" placeholder="0" oninput="saveSideIncome()" />
+          <span style="font-size:12px;color:var(--text3)"> 円</span>
+        </div>
+      </div>
+      <div class="fin-row">
+        <div class="fin-label">🎯 月次目標</div>
+        <div style="text-align:right">
+          <input class="fin-input-inline" type="number" id="side-goal" placeholder="50000" oninput="saveSideIncome()" />
+          <span style="font-size:12px;color:var(--text3)"> 円</span>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="progress-track">
+          <div class="progress-fill" id="side-bar" style="width:0%;background:linear-gradient(90deg,var(--yellow),var(--green))"></div>
+        </div>
+        <div class="progress-detail" style="margin-top:6px" id="side-pct-label">目標まで —</div>
+      </div>
+    </div>
+
+    <div class="section-title">副業タスク</div>
+    <div id="side-task-list"></div>
+    <div class="add-row">
+      <input class="add-input" id="side-task-input" placeholder="タスク（例: LP更新、記事執筆）" onkeydown="if(event.key==='Enter')addSideTask()" />
+      <button class="add-btn" onclick="addSideTask()">+</button>
+    </div>
+
+    <div class="section-title">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Business Monitor Agent</div>
+      <div class="ai-content" id="ai-side-content">【サイト状況】ポートフォリオサイトの直近30日間のPVは前月比 +12%。問い合わせフォームからのリード2件を確認。TOPページの読み込み速度が改善余地あり（現在3.2秒 → 目標2秒以内）。SEO: "USCPA フリーランス" キーワードで順位上昇中。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+
+    <div class="section-title">コンプライアンスメモ</div>
+    <div class="card" style="border-color:var(--yellow);background:var(--yellow-dim)">
+      <div style="font-size:13px;color:var(--yellow);font-weight:600;margin-bottom:6px">⚠️ 就業規則確認事項</div>
+      <textarea class="notes-area" id="compliance-note" placeholder="監査法人の副業規定・確認事項をメモ..." rows="3" oninput="saveComplianceNote()" style="background:rgba(0,0,0,0.2);border-color:rgba(245,158,11,0.3)"></textarea>
+    </div>
+
+  </div>
+
 </main>
 
 <script>
@@ -1200,6 +1546,40 @@ function loadAll() {
 
   // Work status
   if (data.workStatus) setWorkStatus(data.workStatus, true);
+
+  // Finance detail
+  const fd = data.financeDetail || {};
+  if (fd.income) document.getElementById('fin-income').value = fd.income;
+  if (fd.variable) document.getElementById('fin-variable').value = fd.variable;
+  updateRemaining();
+
+  // Assets
+  const ass = data.assets || {};
+  if (ass.invest) document.getElementById('asset-invest').value = ass.invest;
+  if (ass.cash) document.getElementById('asset-cash').value = ass.cash;
+  if (ass.property !== undefined) document.getElementById('asset-property').value = ass.property;
+  updateNetAsset();
+
+  // Shopping lists
+  renderAllShopLists();
+
+  // Style
+  const sty = data.style || {};
+  if (sty.outfitToday) document.getElementById('outfit-today').value = sty.outfitToday;
+  if (sty.brandNotes) document.getElementById('brand-notes').value = sty.brandNotes;
+  if (sty.seasons) {
+    ['spring','summer','autumn','winter'].forEach(s => {
+      if (sty.seasons[s]) document.getElementById(`season-${s}`).textContent = sty.seasons[s];
+    });
+  }
+
+  // Side business
+  const sid = data.side || {};
+  if (sid.income !== undefined) document.getElementById('side-income').value = sid.income;
+  if (sid.goal) document.getElementById('side-goal').value = sid.goal;
+  if (sid.compliance) document.getElementById('compliance-note').value = sid.compliance;
+  renderSideTasks();
+  updateSideProgress();
 }
 
 // ─── MODE ─────────────────────────────────────────────────────────────────
@@ -1627,14 +2007,210 @@ function drawWeightChart() {
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────
+const TAB_ORDER = ['today','health','goals','weekly','finance','shopping','style','side'];
+
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
   document.getElementById(`tab-${name}`).classList.add('active');
-  const idx = ['today','health','goals','weekly'].indexOf(name);
+  const idx = TAB_ORDER.indexOf(name);
   document.querySelectorAll('.tab')[idx].classList.add('active');
   if (name === 'weekly') renderWeeklyGrid();
   if (name === 'health') drawWeightChart();
+}
+
+// ─── FINANCE DETAIL ───────────────────────────────────────────────────────
+function saveFinanceDetail() {
+  const data = loadData();
+  data.financeDetail = data.financeDetail || {};
+  const income = parseFloat(document.getElementById('fin-income').value) || 0;
+  const variable = parseFloat(document.getElementById('fin-variable').value) || 0;
+  data.financeDetail.income = income;
+  data.financeDetail.variable = variable;
+  saveData(data);
+  updateRemaining();
+}
+
+function updateRemaining() {
+  const income = parseFloat(document.getElementById('fin-income').value) || 0;
+  const variable = parseFloat(document.getElementById('fin-variable').value) || 0;
+  const fixed = 260000; // 住宅13万+投資13万
+  const remaining = income - fixed - variable;
+  const el = document.getElementById('fin-remaining');
+  el.textContent = remaining.toLocaleString() + ' 円';
+  el.style.color = remaining >= 0 ? 'var(--green)' : 'var(--red)';
+}
+
+function saveAssets() {
+  const data = loadData();
+  data.assets = {
+    invest: parseFloat(document.getElementById('asset-invest').value) || 0,
+    cash: parseFloat(document.getElementById('asset-cash').value) || 0,
+    property: parseFloat(document.getElementById('asset-property').value) || 5500
+  };
+  saveData(data);
+  updateNetAsset();
+}
+
+function updateNetAsset() {
+  const invest = parseFloat(document.getElementById('asset-invest').value) || 0;
+  const cash = parseFloat(document.getElementById('asset-cash').value) || 0;
+  const property = parseFloat(document.getElementById('asset-property').value) || 5500;
+  const net = invest + cash + property;
+  document.getElementById('asset-net').textContent = net.toLocaleString();
+}
+
+// ─── SHOPPING LIST ────────────────────────────────────────────────────────
+const SHOP_TAGS = { must:'tag-must', want:'tag-want', someday:'tag-someday' };
+const SHOP_LABELS = { must:'必須', want:'欲しい', someday:'いつか' };
+
+function addShopItem(type) {
+  const nameEl = document.getElementById(`${type}-input`);
+  const priceEl = document.getElementById(`${type}-price`);
+  const name = nameEl.value.trim();
+  if (!name) return;
+  const data = loadData();
+  if (!data.shopping) data.shopping = { must:[], want:[], someday:[] };
+  data.shopping[type].push({
+    id: Date.now(),
+    name,
+    price: parseFloat(priceEl.value) || 0,
+    done: false
+  });
+  saveData(data);
+  nameEl.value = ''; priceEl.value = '';
+  renderShopList(type);
+}
+
+function toggleShopItem(type, id) {
+  const data = loadData();
+  const item = data.shopping[type].find(i => i.id === id);
+  if (item) item.done = !item.done;
+  saveData(data);
+  renderShopList(type);
+}
+
+function deleteShopItem(type, id) {
+  const data = loadData();
+  data.shopping[type] = data.shopping[type].filter(i => i.id !== id);
+  saveData(data);
+  renderShopList(type);
+}
+
+function renderShopList(type) {
+  const data = loadData();
+  const items = (data.shopping || {})[type] || [];
+  const container = document.getElementById(`${type}-list`);
+  if (!container) return;
+  container.innerHTML = items.map(item => `
+    <div class="shop-item ${item.done ? 'done' : ''}">
+      <div class="shop-check ${item.done ? 'checked' : ''}" onclick="toggleShopItem('${type}',${item.id})"></div>
+      <div class="shop-name">${item.name}</div>
+      ${item.price ? `<div class="shop-price">¥${item.price.toLocaleString()}</div>` : ''}
+      <span class="shop-tag ${SHOP_TAGS[type]}">${SHOP_LABELS[type]}</span>
+      <span style="font-size:16px;cursor:pointer;color:var(--text3);padding:0 2px" onclick="deleteShopItem('${type}',${item.id})">×</span>
+    </div>
+  `).join('');
+}
+
+function renderAllShopLists() {
+  ['must','want','someday'].forEach(renderShopList);
+}
+
+// ─── STYLE ────────────────────────────────────────────────────────────────
+function saveStyleNote() {
+  const data = loadData();
+  if (!data.style) data.style = {};
+  data.style.outfitToday = document.getElementById('outfit-today').value;
+  saveData(data);
+}
+
+function saveBrandNote() {
+  const data = loadData();
+  if (!data.style) data.style = {};
+  data.style.brandNotes = document.getElementById('brand-notes').value;
+  saveData(data);
+}
+
+function editSeasonNote(season) {
+  const data = loadData();
+  const cur = (data.style?.seasons || {})[season] || document.getElementById(`season-${season}`).textContent;
+  const val = prompt(`${season}のコーデメモ:`, cur);
+  if (val === null) return;
+  if (!data.style) data.style = {};
+  if (!data.style.seasons) data.style.seasons = {};
+  data.style.seasons[season] = val;
+  saveData(data);
+  document.getElementById(`season-${season}`).textContent = val;
+}
+
+// ─── SIDE BUSINESS ────────────────────────────────────────────────────────
+function saveSideIncome() {
+  const data = loadData();
+  if (!data.side) data.side = {};
+  data.side.income = parseFloat(document.getElementById('side-income').value) || 0;
+  data.side.goal = parseFloat(document.getElementById('side-goal').value) || 50000;
+  saveData(data);
+  updateSideProgress();
+}
+
+function updateSideProgress() {
+  const income = parseFloat(document.getElementById('side-income').value) || 0;
+  const goal = parseFloat(document.getElementById('side-goal').value) || 50000;
+  const pct = goal > 0 ? Math.min(100, Math.round((income/goal)*100)) : 0;
+  document.getElementById('side-bar').style.width = pct + '%';
+  const rem = goal - income;
+  document.getElementById('side-pct-label').textContent =
+    rem > 0 ? `目標まであと ¥${rem.toLocaleString()} (${pct}%)` : '🎉 目標達成！';
+}
+
+function addSideTask() {
+  const input = document.getElementById('side-task-input');
+  const name = input.value.trim();
+  if (!name) return;
+  const data = loadData();
+  if (!data.side) data.side = {};
+  if (!data.side.tasks) data.side.tasks = [];
+  data.side.tasks.push({ id: Date.now(), name, done: false });
+  saveData(data);
+  input.value = '';
+  renderSideTasks();
+}
+
+function toggleSideTask(id) {
+  const data = loadData();
+  const task = (data.side?.tasks || []).find(t => t.id === id);
+  if (task) task.done = !task.done;
+  saveData(data);
+  renderSideTasks();
+}
+
+function deleteSideTask(id) {
+  const data = loadData();
+  if (data.side?.tasks) data.side.tasks = data.side.tasks.filter(t => t.id !== id);
+  saveData(data);
+  renderSideTasks();
+}
+
+function renderSideTasks() {
+  const data = loadData();
+  const tasks = data.side?.tasks || [];
+  const container = document.getElementById('side-task-list');
+  if (!container) return;
+  container.innerHTML = tasks.map(t => `
+    <div class="shop-item ${t.done ? 'done' : ''}">
+      <div class="shop-check ${t.done ? 'checked' : ''}" onclick="toggleSideTask(${t.id})"></div>
+      <div class="shop-name">${t.name}</div>
+      <span style="font-size:16px;cursor:pointer;color:var(--text3);padding:0 2px" onclick="deleteSideTask(${t.id})">×</span>
+    </div>
+  `).join('');
+}
+
+function saveComplianceNote() {
+  const data = loadData();
+  if (!data.side) data.side = {};
+  data.side.compliance = document.getElementById('compliance-note').value;
+  saveData(data);
 }
 
 // ─── RESIZE ───────────────────────────────────────────────────────────────
