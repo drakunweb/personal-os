@@ -959,13 +959,13 @@
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settings-modal" onclick="closeSettingsIfOutside(event)">
   <div class="modal">
-    <div class="modal-title">⚙️ Gist同期設定</div>
-    <div class="modal-label">GitHub Token（gistスコープ）</div>
-    <input class="modal-input" type="password" id="cfg-token" placeholder="ghp_またはgho_から始まるトークン" />
-    <div class="modal-hint">GitHub → Settings → Developer settings → Personal access tokens → <strong>gist</strong> にチェック</div>
-    <div class="modal-label">Gist ID（自動設定済み）</div>
-    <input class="modal-input" type="text" id="cfg-gist" placeholder="Gist ID" />
-    <div class="modal-hint">変更不要。別のGistに切り替えたい場合のみ編集。</div>
+    <div class="modal-title">⚙️ 同期設定</div>
+    <div class="modal-label">API URL</div>
+    <input class="modal-input" type="url" id="cfg-api-url" placeholder="https://personal-os-api.xxx.workers.dev" />
+    <div class="modal-hint">Cloudflare Workers のURL。セットアップ後に自動表示されます。</div>
+    <div class="modal-label">API Key</div>
+    <input class="modal-input" type="password" id="cfg-api-key" placeholder="setup.sh で生成されたキー" />
+    <div class="modal-hint">setup.sh 実行時に表示されたランダムキーを貼り付けてください。</div>
     <div id="sync-error-msg" style="font-size:12px;color:var(--red);min-height:16px;margin-bottom:8px;word-break:break-all"></div>
     <div class="modal-actions">
       <button class="btn" style="flex:1" onclick="saveSettings()">保存して同期</button>
@@ -2131,9 +2131,12 @@
 
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────
-const DATA_KEY = 'personal_os_v1';
-const CFG_TOKEN = 'personal_os_token';
-const CFG_GIST  = 'personal_os_gist';
+const DATA_KEY   = 'personal_os_v1';
+const CFG_API_URL = 'personal_os_api_url';
+const CFG_API_KEY = 'personal_os_api_key';
+// 後方互換: Gistも残す
+const CFG_TOKEN  = 'personal_os_token';
+const CFG_GIST   = 'personal_os_gist';
 const DEFAULT_GIST_ID = '257773ea1a3c5e443329f8ed0a7584a0';
 const HABITS = ['gym','meal','sleep','mouth','cia','water'];
 const HABIT_NAMES = {gym:'ジム',meal:'食事管理',sleep:'7h睡眠',mouth:'マウスピース',cia:'CIA学習',water:'水2L'};
@@ -2150,7 +2153,7 @@ function loadData() {
 function saveData(data) {
   localStorage.setItem(DATA_KEY, JSON.stringify(data));
   showSaveIndicator();
-  scheduleGistSync();
+  scheduleSync();
 }
 
 function showSaveIndicator() {
@@ -2160,73 +2163,122 @@ function showSaveIndicator() {
   el._t = setTimeout(() => el.classList.remove('show'), 1500);
 }
 
-// ─── GIST SYNC ────────────────────────────────────────────────────────────
+// ─── SYNC (Worker API + Gist fallback) ────────────────────────────────────
 let _syncTimer = null;
 
-function getGistConfig() {
-  const token = localStorage.getItem(CFG_TOKEN) || '';
-  const gistId = localStorage.getItem(CFG_GIST) || DEFAULT_GIST_ID;
-  return { token, gistId };
+function getSyncConfig() {
+  return {
+    apiUrl: localStorage.getItem(CFG_API_URL) || '',
+    apiKey: localStorage.getItem(CFG_API_KEY) || '',
+    // Gist fallback
+    token:  localStorage.getItem(CFG_TOKEN) || '',
+    gistId: localStorage.getItem(CFG_GIST) || DEFAULT_GIST_ID,
+  };
 }
 
 function setSyncStatus(status, label) {
   const badge = document.getElementById('sync-badge');
-  const lbl = document.getElementById('sync-label');
+  const lbl   = document.getElementById('sync-label');
   badge.className = `sync-badge ${status}`;
   lbl.textContent = label;
 }
 
-function scheduleGistSync() {
+function scheduleSync() {
   clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(syncToGist, 2000);
+  _syncTimer = setTimeout(syncToRemote, 2000);
 }
 
-async function syncToGist() {
-  const { token, gistId } = getGistConfig();
-  if (!token) { setSyncStatus('', '未設定'); return; }
+// ── Worker API sync ────────────────────────────────────────────────────────
+async function syncToWorker(data, cfg) {
+  const res = await fetch(`${cfg.apiUrl}/data`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': cfg.apiKey },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.status }));
+    throw new Error(`${res.status}: ${err.error || 'unknown'}`);
+  }
+}
+
+async function loadFromWorker(cfg) {
+  const res = await fetch(`${cfg.apiUrl}/data`, {
+    headers: { 'X-API-Key': cfg.apiKey },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.status }));
+    throw new Error(`${res.status}: ${err.error || 'unknown'}`);
+  }
+  const json = await res.json();
+  return json.data || {};
+}
+
+// ── Gist sync (fallback) ───────────────────────────────────────────────────
+async function syncToGist(data, cfg) {
+  const res = await fetch(`https://api.github.com/gists/${cfg.gistId}`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `token ${cfg.token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ files: { 'personal_os_data.json': { content: JSON.stringify(data) } } }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: res.status }));
+    throw new Error(`${res.status}: ${err.message}`);
+  }
+}
+
+async function loadFromGistFallback(cfg) {
+  const res = await fetch(`https://api.github.com/gists/${cfg.gistId}`, {
+    headers: { 'Authorization': `token ${cfg.token}` },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: res.status }));
+    throw new Error(`${res.status}: ${err.message}`);
+  }
+  const json = await res.json();
+  const content = json.files['personal_os_data.json']?.content;
+  return content ? JSON.parse(content) : {};
+}
+
+// ── Unified sync ───────────────────────────────────────────────────────────
+async function syncToRemote() {
+  const cfg = getSyncConfig();
+  if (!cfg.apiUrl && !cfg.token) { setSyncStatus('', '未設定'); return; }
   setSyncStatus('syncing', '同期中...');
   try {
     const data = loadData();
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ files: { 'personal_os_data.json': { content: JSON.stringify(data) } } })
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({message:res.status}));
-      throw new Error(`${res.status}: ${err.message}`);
+    if (cfg.apiUrl && cfg.apiKey) {
+      await syncToWorker(data, cfg);
+    } else {
+      await syncToGist(data, cfg);
     }
     setSyncStatus('synced', '同期済み ✓');
+    document.getElementById('sync-error-msg').textContent = '';
   } catch(e) {
-    console.error('Gist sync error:', e.message);
+    console.error('Sync error:', e.message);
     setSyncStatus('error', 'エラー');
     document.getElementById('sync-error-msg').textContent = e.message;
   }
 }
 
-async function loadFromGist() {
-  const { token, gistId } = getGistConfig();
-  if (!token) { setSyncStatus('', '未設定'); return; }
+async function loadFromRemote() {
+  const cfg = getSyncConfig();
+  if (!cfg.apiUrl && !cfg.token) { setSyncStatus('', '未設定'); return; }
   setSyncStatus('syncing', '読込中...');
   try {
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-      headers: { 'Authorization': `token ${token}` }
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({message:res.status}));
-      throw new Error(`${res.status}: ${err.message}`);
+    let remote = {};
+    if (cfg.apiUrl && cfg.apiKey) {
+      remote = await loadFromWorker(cfg);
+    } else {
+      remote = await loadFromGistFallback(cfg);
     }
-    const json = await res.json();
-    const content = json.files['personal_os_data.json']?.content;
-    if (content) {
-      const remote = JSON.parse(content);
-      const local = loadData();
-      const merged = Object.assign({}, local, remote);
-      localStorage.setItem(DATA_KEY, JSON.stringify(merged));
-    }
+    const local = loadData();
+    // リモートを優先してマージ（日付キーはリモート優先）
+    const merged = Object.assign({}, local, remote);
+    localStorage.setItem(DATA_KEY, JSON.stringify(merged));
     setSyncStatus('synced', '同期済み ✓');
+    document.getElementById('sync-error-msg').textContent = '';
   } catch(e) {
-    console.error('Gist load error:', e.message);
+    console.error('Load error:', e.message);
     setSyncStatus('error', 'エラー');
     document.getElementById('sync-error-msg').textContent = e.message;
   }
@@ -2234,9 +2286,10 @@ async function loadFromGist() {
 
 // ─── SETTINGS MODAL ───────────────────────────────────────────────────────
 function openSettings() {
-  const { token, gistId } = getGistConfig();
-  document.getElementById('cfg-token').value = token;
-  document.getElementById('cfg-gist').value = gistId || DEFAULT_GIST_ID;
+  const cfg = getSyncConfig();
+  document.getElementById('cfg-api-url').value = cfg.apiUrl;
+  document.getElementById('cfg-api-key').value = cfg.apiKey;
+  document.getElementById('sync-error-msg').textContent = '';
   document.getElementById('settings-modal').classList.add('open');
 }
 
@@ -2249,18 +2302,18 @@ function closeSettingsIfOutside(e) {
 }
 
 function saveSettings() {
-  const token = document.getElementById('cfg-token').value.trim();
-  const gistId = document.getElementById('cfg-gist').value.trim() || DEFAULT_GIST_ID;
-  if (token) localStorage.setItem(CFG_TOKEN, token);
-  localStorage.setItem(CFG_GIST, gistId);
+  const apiUrl = document.getElementById('cfg-api-url').value.trim().replace(/\/$/, '');
+  const apiKey = document.getElementById('cfg-api-key').value.trim();
+  if (apiUrl) localStorage.setItem(CFG_API_URL, apiUrl);
+  if (apiKey) localStorage.setItem(CFG_API_KEY, apiKey);
   closeSettings();
-  loadFromGist().then(() => loadAll());
+  loadFromRemote().then(() => loadAll());
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   setHeaderDate();
-  await loadFromGist();
+  await loadFromRemote();
   loadAll();
   renderWeeklyGrid();
   updateStats();

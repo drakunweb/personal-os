@@ -1,0 +1,16 @@
+name = "personal-os-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV Namespace — wrangler kv namespace create "PERSONAL_OS_KV" で作成後にIDを記入
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_ID"
+
+[vars]
+# API_KEY は wrangler secret put API_KEY でセキュアに設定する
+
+[[routes]]
+pattern = "personal-os-api.drakunweb.workers.dev/*"
+zone_name = "workers.dev"
