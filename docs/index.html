@@ -987,10 +987,6 @@
   <!-- TODAY STAT STRIP -->
   <div class="stat-strip" style="margin-top:4px">
     <div class="stat-cell">
-      <div class="stat-cell-val" id="stat-streak" style="color:var(--green)">—</div>
-      <div class="stat-cell-label">ジム連続</div>
-    </div>
-    <div class="stat-cell">
       <div class="stat-cell-val" id="stat-habits">—</div>
       <div class="stat-cell-label">今日の習慣</div>
     </div>
@@ -1001,6 +997,10 @@
     <div class="stat-cell">
       <div class="stat-cell-val" id="stat-sleep" style="color:var(--accent)">—</div>
       <div class="stat-cell-label">睡眠 h</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-cell-val" id="stat-cia-top" style="color:var(--accent)">—</div>
+      <div class="stat-cell-label">CIA進捗</div>
     </div>
   </div>
 
@@ -2604,8 +2604,11 @@ function updateStats() {
   const sl = td.metrics?.sleep;
   document.getElementById('stat-sleep').textContent = sl ? sl.toFixed(1) : '—';
 
-  // Gym streak
-  document.getElementById('stat-streak').textContent = calcStreak('gym') + '日';
+  // CIA top strip
+  const _ciaTop = loadData().cia || {};
+  const _ciaPassed = [1,2,3].filter(n => _ciaTop[`p${n}`]).length;
+  const _ciaEl = document.getElementById('stat-cia-top');
+  if (_ciaEl) _ciaEl.textContent = Math.round((_ciaPassed/3)*100) + '%';
 
   // Streak displays
   document.getElementById('streak-gym-val').textContent = calcStreak('gym');
