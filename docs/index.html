@@ -107,7 +107,8 @@
       margin: 24px 0 12px;
     }
 
-    .grid { display: grid; gap: 12px; }
+    .grid { display: grid; gap: 12px; width: 100%; min-width: 0; }
+    .grid > * { min-width: 0; overflow: hidden; }
     .grid-2 { grid-template-columns: 1fr 1fr; }
     .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
 
@@ -304,6 +305,8 @@
       font-family: inherit;
       letter-spacing: -1px;
       width: 100%;
+      min-width: 0;
+      flex: 1;
     }
 
     .metric-input::placeholder { color: var(--border2); }
@@ -450,6 +453,126 @@
 
     .stat-cell-val { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
     .stat-cell-label { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+    /* ─── TODAY PANEL ─── */
+    .today-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .today-panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .today-clock {
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      color: var(--text);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .today-next {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+      min-width: 0;
+    }
+    .today-next-label {
+      font-size: 10px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .today-next-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+    .today-goal-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+    .today-goal-input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .today-goal-input::placeholder { color: var(--text3); }
+    .today-pfc-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pfc-mini-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+    .pfc-mini-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text3);
+      width: 10px;
+      flex-shrink: 0;
+    }
+    .pfc-mini-bar {
+      flex: 1;
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .pfc-mini-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .pfc-fill-p { background: var(--blue); }
+    .pfc-fill-f { background: var(--yellow); }
+    .pfc-fill-c { background: var(--green); }
+    .pfc-mini-num {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      width: 30px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .pfc-mini-kcal {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text3);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
 
     /* ─── BUTTON ─── */
     .btn {
@@ -767,8 +890,8 @@
     .routine-check { width:24px; height:24px; border:2px solid var(--border2); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
     .routine-check.done { background:var(--green); border-color:var(--green); }
     .routine-check.done::after { content:'✓'; font-size:13px; color:#fff; font-weight:700; }
-    .routine-label { flex:1; font-size:14px; color:var(--text2); }
-    .routine-tip { font-size:11px; color:var(--text3); }
+    .routine-label { flex:1; font-size:14px; color:var(--text2); min-width:0; word-break:break-word; }
+    .routine-tip { font-size:11px; color:var(--text3); flex-shrink:0; white-space:nowrap; }
 
     /* ─── AI AGENT CARD ─── */
     .ai-card {
@@ -984,23 +1107,36 @@
     ⚡ 省エネモード — 最小行動のみ実行。他は捨てる。
   </div>
 
-  <!-- TODAY STAT STRIP -->
-  <div class="stat-strip" style="margin-top:4px">
-    <div class="stat-cell">
-      <div class="stat-cell-val" id="stat-habits">—</div>
-      <div class="stat-cell-label">今日の習慣</div>
+  <!-- TODAY PANEL -->
+  <div class="today-panel">
+    <div class="today-panel-top">
+      <div class="today-clock" id="today-clock">--:--</div>
+      <div class="today-next">
+        <span class="today-next-label">次の予定</span>
+        <span class="today-next-text" id="next-event-text">—</span>
+      </div>
     </div>
-    <div class="stat-cell">
-      <div class="stat-cell-val" id="stat-weight" style="color:var(--blue)">—</div>
-      <div class="stat-cell-label">体重 kg</div>
+    <div class="today-goal-row">
+      <span style="font-size:16px;flex-shrink:0">🎯</span>
+      <input class="today-goal-input" id="today-goal" placeholder="今日をどんな日にする？" oninput="saveTodayGoal()" />
     </div>
-    <div class="stat-cell">
-      <div class="stat-cell-val" id="stat-sleep" style="color:var(--accent)">—</div>
-      <div class="stat-cell-label">睡眠 h</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-cell-val" id="stat-cia-top" style="color:var(--accent)">—</div>
-      <div class="stat-cell-label">CIA進捗</div>
+    <div class="today-pfc-row">
+      <div class="pfc-mini-item">
+        <span class="pfc-mini-lbl">P</span>
+        <div class="pfc-mini-bar"><div class="pfc-mini-fill pfc-fill-p" id="strip-p-bar"></div></div>
+        <span class="pfc-mini-num" id="strip-p-val">0g</span>
+      </div>
+      <div class="pfc-mini-item">
+        <span class="pfc-mini-lbl">F</span>
+        <div class="pfc-mini-bar"><div class="pfc-mini-fill pfc-fill-f" id="strip-f-bar"></div></div>
+        <span class="pfc-mini-num" id="strip-f-val">0g</span>
+      </div>
+      <div class="pfc-mini-item">
+        <span class="pfc-mini-lbl">C</span>
+        <div class="pfc-mini-bar"><div class="pfc-mini-fill pfc-fill-c" id="strip-c-bar"></div></div>
+        <span class="pfc-mini-num" id="strip-c-val">0g</span>
+      </div>
+      <span class="pfc-mini-kcal" id="strip-kcal">— kcal</span>
     </div>
   </div>
 
@@ -1034,36 +1170,12 @@
       <div class="greeting-sub" id="greeting-sub">今日も5つの資本を前進させましょう</div>
     </div>
 
-    <!-- Quick stats -->
-    <div class="summary-grid" style="margin-top:10px">
-      <div class="summary-card" onclick="switchTab('health')">
-        <div class="summary-card-icon">⚖️</div>
-        <div class="summary-card-title">体重</div>
-        <div class="summary-card-val" id="sum-weight" style="color:var(--blue)">— kg</div>
-        <div class="summary-card-sub" id="sum-weight-sub">目標: 68.0 kg</div>
-        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-weight-bar" style="background:var(--blue);width:0%"></div></div>
-      </div>
-      <div class="summary-card" onclick="switchTab('health')">
-        <div class="summary-card-icon">😴</div>
-        <div class="summary-card-title">昨夜の睡眠</div>
-        <div class="summary-card-val" id="sum-sleep" style="color:var(--accent)">— h</div>
-        <div class="summary-card-sub" id="sum-sleep-sub">目標: 7時間</div>
-        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-sleep-bar" style="background:var(--accent);width:0%"></div></div>
-      </div>
-      <div class="summary-card" onclick="switchTab('study')">
-        <div class="summary-card-icon">📚</div>
-        <div class="summary-card-title">CIA進捗</div>
-        <div class="summary-card-val" id="sum-cia" style="color:var(--accent)">0%</div>
-        <div class="summary-card-sub">Part 1〜3</div>
-        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-cia-bar" style="background:var(--accent);width:0%"></div></div>
-      </div>
-      <div class="summary-card" onclick="switchTab('finance')">
-        <div class="summary-card-icon">💴</div>
-        <div class="summary-card-title">今月の手残り</div>
-        <div class="summary-card-val" id="sum-finance" style="color:var(--green);font-size:16px">— 円</div>
-        <div class="summary-card-sub" id="sum-finance-sub">収支計算中</div>
-        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-finance-bar" style="background:var(--green);width:0%"></div></div>
-      </div>
+    <!-- hidden elements kept for JS references -->
+    <div style="display:none">
+      <div id="sum-weight"></div><div id="sum-weight-sub"></div><div id="sum-weight-bar"></div>
+      <div id="sum-sleep"></div><div id="sum-sleep-sub"></div><div id="sum-sleep-bar"></div>
+      <div id="sum-cia"></div><div id="sum-cia-bar"></div>
+      <div id="sum-finance"></div><div id="sum-finance-sub"></div><div id="sum-finance-bar"></div>
     </div>
 
     <!-- Habits compact -->
@@ -2313,6 +2425,7 @@ function saveSettings() {
 // ─── INIT ─────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   setHeaderDate();
+  startClock();
   await loadFromRemote();
   loadAll();
   renderWeeklyGrid();
@@ -2452,6 +2565,14 @@ function loadAll() {
   // Meals
   renderMeals();
   drawPFCChart();
+
+  // Today goal
+  const goalEl = document.getElementById('today-goal');
+  if (goalEl && td.goal) goalEl.value = td.goal;
+
+  // Today panel
+  updatePFCStrip();
+  updateNextEvent();
 
   // Summary
   updateSummary();
@@ -2639,30 +2760,6 @@ function setWorkStatus(status, silent) {
 
 // ─── STATS ────────────────────────────────────────────────────────────────
 function updateStats() {
-  const data = loadData();
-  const today = todayKey();
-  const td = data[today] || {};
-
-  // Today habits count
-  const habits = td.habits || {};
-  const doneCount = HABITS.filter(h => habits[h]).length;
-  document.getElementById('stat-habits').textContent = `${doneCount}/${HABITS.length}`;
-  document.getElementById('stat-habits').style.color = doneCount === HABITS.length ? 'var(--green)' : doneCount >= 4 ? 'var(--yellow)' : 'var(--text)';
-
-  // Weight
-  const w = td.metrics?.weight;
-  document.getElementById('stat-weight').textContent = w ? w.toFixed(1) : '—';
-
-  // Sleep
-  const sl = td.metrics?.sleep;
-  document.getElementById('stat-sleep').textContent = sl ? sl.toFixed(1) : '—';
-
-  // CIA top strip
-  const _ciaTop = loadData().cia || {};
-  const _ciaPassed = [1,2,3].filter(n => _ciaTop[`p${n}`]).length;
-  const _ciaEl = document.getElementById('stat-cia-top');
-  if (_ciaEl) _ciaEl.textContent = Math.round((_ciaPassed/3)*100) + '%';
-
   // Streak displays
   document.getElementById('streak-gym-val').textContent = calcStreak('gym');
   document.getElementById('streak-mouth-val').textContent = calcStreak('mouth');
@@ -2670,6 +2767,71 @@ function updateStats() {
 
   // Weekly summary
   updateWeeklySummary();
+
+  // Update PFC strip
+  updatePFCStrip();
+
+  // Update next event
+  updateNextEvent();
+}
+
+// ─── TODAY PANEL ──────────────────────────────────────────────────────────
+function startClock() {
+  function tick() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const el = document.getElementById('today-clock');
+    if (el) el.textContent = `${hh}:${mm}`;
+    updateNextEvent();
+  }
+  tick();
+  setInterval(tick, 30000);
+}
+
+function updateNextEvent() {
+  const data = loadData();
+  const today = todayKey();
+  const now = new Date();
+  const currentTime = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const events = (data.scheduleEvents || [])
+    .filter(e => e.date === today && e.time > currentTime)
+    .sort((a, b) => a.time.localeCompare(b.time));
+  const el = document.getElementById('next-event-text');
+  if (el) {
+    el.textContent = events.length > 0 ? `${events[0].time} ${events[0].text}` : '予定なし';
+  }
+}
+
+function saveTodayGoal() {
+  const data = loadData();
+  const today = todayKey();
+  if (!data[today]) data[today] = {};
+  data[today].goal = document.getElementById('today-goal').value;
+  saveData(data);
+}
+
+function updatePFCStrip() {
+  const data = loadData();
+  const today = todayKey();
+  const pfc = data[today]?.pfc || {};
+  const p = pfc.p || 0, f = pfc.f || 0, c = pfc.c || 0;
+  const kcal = Math.round(p*4 + f*9 + c*4);
+  const maxP = 180, maxF = 70, maxC = 250;
+  const pBar = document.getElementById('strip-p-bar');
+  const fBar = document.getElementById('strip-f-bar');
+  const cBar = document.getElementById('strip-c-bar');
+  if (pBar) pBar.style.width = Math.min(100, Math.round(p/maxP*100)) + '%';
+  if (fBar) fBar.style.width = Math.min(100, Math.round(f/maxF*100)) + '%';
+  if (cBar) cBar.style.width = Math.min(100, Math.round(c/maxC*100)) + '%';
+  const pVal = document.getElementById('strip-p-val');
+  const fVal = document.getElementById('strip-f-val');
+  const cVal = document.getElementById('strip-c-val');
+  const kcalEl = document.getElementById('strip-kcal');
+  if (pVal) pVal.textContent = p + 'g';
+  if (fVal) fVal.textContent = f + 'g';
+  if (cVal) cVal.textContent = c + 'g';
+  if (kcalEl) kcalEl.textContent = kcal ? kcal + ' kcal' : '— kcal';
 }
 
 function calcStreak(habit) {
@@ -3084,6 +3246,7 @@ function updatePFC() {
   data[today].pfc = {p,f,c};
   saveData(data);
   drawPFCChart();
+  updatePFCStrip();
 }
 
 function drawPFCChart() {
