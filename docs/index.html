@@ -895,11 +895,12 @@
 
     /* ─── AI AGENT CARD ─── */
     .ai-card {
-      border: 2px dashed var(--border2);
+      border: 1px solid rgba(124,58,237,0.35);
       border-radius: var(--radius);
       padding: 16px;
       position: relative;
-      background: linear-gradient(135deg, rgba(124,58,237,0.04), transparent);
+      background: linear-gradient(135deg, rgba(124,58,237,0.07), rgba(124,58,237,0.02));
+      box-shadow: 0 0 20px rgba(124,58,237,0.1);
     }
     .ai-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -913,6 +914,43 @@
     }
     .ai-content:empty::before { content: 'AIエージェントが自動更新します...'; color: var(--text3); font-style: italic; }
     .ai-updated { font-size: 11px; color: var(--text3); margin-top: 8px; }
+
+    /* ─── HUMAN / AI SECTION BADGES ─── */
+    .human-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0;
+      color: var(--green); background: rgba(16,185,129,0.12);
+      border-radius: 99px; padding: 2px 8px;
+      vertical-align: middle; text-transform: none;
+    }
+    .ai-label-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0;
+      color: var(--accent); background: rgba(124,58,237,0.12);
+      border-radius: 99px; padding: 2px 8px;
+      vertical-align: middle; text-transform: none;
+    }
+    /* 人入力カード: 左に緑のアクセントライン */
+    .human-card {
+      border-left: 3px solid var(--green) !important;
+    }
+    /* AIレポートカードの instruction log */
+    .inst-log-item {
+      border-left: 2px solid rgba(124,58,237,0.4);
+    }
+    /* セクションタイトル+バッジ横並び */
+    .section-title-row {
+      display: flex; align-items: center; gap: 8px;
+      margin: 24px 0 12px;
+    }
+    .section-title-row .section-title {
+      margin: 0;
+    }
+    /* 人入力エリアの視覚的ヒント */
+    .input-hint {
+      font-size: 11px; color: var(--green); opacity: 0.7;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 4px;
+    }
 
     /* ─── SHOPPING LIST ─── */
     .shop-item {
@@ -1141,24 +1179,23 @@
   </div>
 
   <!-- TABS -->
-  <div class="section-title" style="margin-top:20px">セクション</div>
-  <div class="tabs">
+  <div class="tabs" style="margin-top:16px">
     <div class="tab active" onclick="switchTab('today')">📋 今日</div>
-    <div class="tab" onclick="switchTab('schedule')">📅 スケジュール</div>
+    <div class="tab" onclick="switchTab('schedule')">📅 予定</div>
+    <div class="tab" onclick="switchTab('health')">💪 記録</div>
     <div class="tab" onclick="switchTab('gym')">🏋️ 筋トレ</div>
     <div class="tab" onclick="switchTab('meal')">🍽️ 食事</div>
-    <div class="tab" onclick="switchTab('health')">💚 健康</div>
     <div class="tab" onclick="switchTab('study')">📚 勉強</div>
     <div class="tab" onclick="switchTab('work')">💼 仕事</div>
     <div class="tab" onclick="switchTab('goals')">🎯 目標</div>
-    <div class="tab" onclick="switchTab('weekly')">📊 週間</div>
     <div class="tab" onclick="switchTab('finance')">💴 財務</div>
+    <div class="tab" onclick="switchTab('side')">🚀 副業</div>
     <div class="tab" onclick="switchTab('shopping')">🛒 リスト</div>
     <div class="tab" onclick="switchTab('style')">👔 スタイル</div>
-    <div class="tab" onclick="switchTab('side')">🚀 副業</div>
-    <div class="tab" onclick="switchTab('news')">📰 ニュース</div>
     <div class="tab" onclick="switchTab('ideas')">💡 アイデア</div>
-    <div class="tab" onclick="switchTab('aiagent')">🤖 AI指示</div>
+    <div class="tab" onclick="switchTab('weekly')">📊 週次</div>
+    <div class="tab" onclick="switchTab('news')">📰 ニュース</div>
+    <div class="tab" onclick="switchTab('aiagent')">🤖 AI</div>
   </div>
 
   <!-- TAB: TODAY (SUMMARY) -->
@@ -1179,7 +1216,7 @@
     </div>
 
     <!-- Habits compact -->
-    <div class="section-title">今日の習慣</div>
+    <div class="section-title">今日の習慣 <span class="human-badge">✏️ タップして記録</span></div>
     <div class="habit-row-compact">
       <div class="habit-chip" id="chip-gym" onclick="toggleHabit('gym')"><span class="habit-chip-icon">🏋️</span>筋トレ</div>
       <div class="habit-chip" id="chip-meal" onclick="toggleHabit('meal')"><span class="habit-chip-icon">🥗</span>食事</div>
@@ -1190,7 +1227,7 @@
     </div>
 
     <!-- Priorities -->
-    <div class="section-title">今日の3優先事項</div>
+    <div class="section-title">今日の3優先事項 <span class="human-badge">✏️ 手入力</span></div>
     <div class="priority-list">
       <div class="priority-item" id="pri-0">
         <div class="priority-num">1</div>
@@ -1245,7 +1282,7 @@
     </div>
 
     <!-- Quick note -->
-    <div class="section-title">今日のメモ</div>
+    <div class="section-title">今日のメモ <span class="human-badge">✏️ 手入力</span></div>
     <textarea class="notes-area" id="daily-notes" placeholder="気づき・学び・決定事項・懸念点..." rows="4" oninput="saveNotes()"></textarea>
 
   </div>
@@ -1253,9 +1290,9 @@
   <!-- TAB: HEALTH -->
   <div class="tab-content" id="tab-health">
 
-    <div class="section-title">今日の数値</div>
+    <div class="section-title">今日の数値 <span class="human-badge">✏️ 毎日入力</span></div>
     <div class="grid grid-2">
-      <div class="metric-input-card">
+      <div class="metric-input-card human-card">
         <div class="card-label">体重</div>
         <div style="display:flex;align-items:baseline;gap:6px">
           <input class="metric-input" type="number" step="0.1" id="metric-weight" placeholder="72.0" oninput="saveMetric('weight')" style="width:auto;flex:1" />
@@ -1338,7 +1375,7 @@
       </div>
     </div>
 
-    <div class="section-title">📏 身長を伸ばす習慣</div>
+    <div class="section-title">📏 身長を伸ばす習慣 <span class="human-badge">✏️ 毎日チェック</span></div>
     <div class="card">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <div style="flex:1"><div class="card-label">現在の身長</div>
@@ -1386,7 +1423,7 @@
       </div>
     </div>
 
-    <div class="section-title">🧴 スキンケアルーティン</div>
+    <div class="section-title">🧴 スキンケアルーティン <span class="human-badge">✏️ 毎日チェック</span></div>
     <div class="card">
       <div class="card-label" style="margin-bottom:8px">朝のケア</div>
       <div class="routine-item">
@@ -1427,7 +1464,7 @@
       </div>
     </div>
 
-    <div class="section-title">💇 ヘアスタイル</div>
+    <div class="section-title">💇 ヘアスタイル <span class="human-badge">✏️ 毎日チェック</span></div>
     <div class="card">
       <div class="routine-item">
         <div class="routine-check" onclick="toggleRoutine(this)"></div>
@@ -1455,7 +1492,7 @@
   <!-- TAB: GOALS -->
   <div class="tab-content" id="tab-goals">
 
-    <div class="section-title">CIA 合格進捗</div>
+    <div class="section-title">CIA 合格進捗 <span class="human-badge">✏️ 更新</span></div>
     <div class="progress-card">
       <div class="progress-header">
         <div class="progress-title">📚 公認内部監査人</div>
@@ -1485,7 +1522,7 @@
       </div>
     </div>
 
-    <div class="section-title">体重目標</div>
+    <div class="section-title">体重目標 <span class="human-badge">✏️ 設定</span></div>
     <div class="progress-card">
       <div class="progress-header">
         <div class="progress-title">⚖️ 減量目標</div>
@@ -1512,7 +1549,7 @@
       </div>
     </div>
 
-    <div class="section-title">財務目標</div>
+    <div class="section-title">財務目標 <span class="human-badge">✏️ 設定</span></div>
     <div class="progress-card">
       <div class="progress-header">
         <div class="progress-title">💰 独立資金</div>
@@ -1539,7 +1576,7 @@
       </div>
     </div>
 
-    <div class="section-title">週次フォーカス</div>
+    <div class="section-title">週次フォーカス <span class="human-badge">✏️ 毎週設定</span></div>
     <div class="card">
       <div class="card-label">今週のテーマ</div>
       <input style="background:none;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-size:16px;font-weight:600;width:100%;outline:none;padding:6px 0;font-family:inherit" id="weekly-theme" placeholder="例: 睡眠リズムの安定化" oninput="saveWeeklyTheme()" />
@@ -1555,12 +1592,12 @@
   <!-- TAB: WEEKLY -->
   <div class="tab-content" id="tab-weekly">
 
-    <div class="section-title">今週の習慣達成</div>
+    <div class="section-title">今週の習慣達成 <span class="ai-label-badge">🤖 自動集計</span></div>
     <div class="card" id="weekly-grid-container">
       <!-- Generated by JS -->
     </div>
 
-    <div class="section-title">今週のサマリー</div>
+    <div class="section-title">今週のサマリー <span class="ai-label-badge">🤖 自動集計</span></div>
     <div class="stat-strip">
       <div class="stat-cell">
         <div class="stat-cell-val" id="week-gym" style="color:var(--green)">0</div>
@@ -1600,7 +1637,7 @@
       </div>
       <div class="mini-cal" id="cal-grid" style="margin-top:4px"></div>
     </div>
-    <div class="section-title">今日の予定</div>
+    <div class="section-title">今日の予定 <span class="human-badge">✏️ 手入力</span></div>
     <div id="schedule-events"></div>
     <div class="add-row">
       <input class="add-input" id="event-time" type="time" style="width:100px;flex:none" />
@@ -1617,7 +1654,7 @@
 
   <!-- TAB: GYM (筋トレ) -->
   <div class="tab-content" id="tab-gym">
-    <div class="section-title">トレーニング日設定</div>
+    <div class="section-title">トレーニング日設定 <span class="human-badge">✏️ 設定</span></div>
     <div class="card">
       <div class="workout-day-selector" id="wd-selector">
         <div class="wd-btn active" onclick="toggleTrainingDay(0)" id="wd-0"><div class="wd-day">月</div><div class="wd-dot"></div></div>
@@ -1630,7 +1667,7 @@
       </div>
       <div style="font-size:12px;color:var(--text3);text-align:center">タップでオン/オフ切替 · 紫=トレーニング日</div>
     </div>
-    <div class="section-title">今日のメニュー</div>
+    <div class="section-title">今日のメニュー <span class="human-badge">✏️ 手入力</span></div>
     <div id="exercise-list"></div>
     <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
       <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('ベンチプレス','胸')">+ ベンチプレス</button>
@@ -1639,17 +1676,17 @@
       <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('懸垂','背中')">+ 懸垂</button>
       <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('','')">+ カスタム</button>
     </div>
-    <div class="section-title" style="margin-top:16px">AIエージェント連携</div>
+    <div class="section-title" style="margin-top:16px">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Trainer Agent</div>
       <div class="ai-content">今週のボリューム：胸 12sets / 背中 9sets / 脚 6sets。回復を考慮すると明日は脚トレ推奨。ベンチプレスは先週比+2.5kg達成。次のマイルストーン：100kg × 5reps。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
   </div>
 
   <!-- TAB: MEAL (食事) -->
   <div class="tab-content" id="tab-meal">
-    <div class="section-title">今日のPFCバランス</div>
+    <div class="section-title">今日のPFCバランス <span class="human-badge">✏️ 手入力</span></div>
     <div class="card">
       <div class="pfc-wrap">
         <div class="pfc-ring-wrap">
@@ -1702,7 +1739,7 @@
         <div class="pfc-unit">g</div>
       </div>
     </div>
-    <div class="section-title">食事ログ</div>
+    <div class="section-title">食事ログ <span class="human-badge">✏️ 手入力</span></div>
     <div class="meal-section">
       <div class="meal-header" onclick="toggleMealSection('breakfast')">
         <div class="meal-title">🌅 朝食</div>
@@ -1768,11 +1805,11 @@
         </div>
       </div>
     </div>
-    <div class="section-title">AIエージェント連携</div>
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Nutrition Agent</div>
       <div class="ai-content">今日の摂取状況：タンパク質目標（体重×2g = 144g）に対して現在82g。夕食でプロテイン30g追加を推奨。脂質は目標内。炭水化物はトレーニング後の摂取タイミングを最適化してください。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
   </div>
 
@@ -1785,7 +1822,7 @@
       <div class="stat-cell"><div class="stat-cell-val" style="color:var(--blue)" id="study-today-h">0</div><div class="stat-cell-label">今日(h)</div></div>
       <div class="stat-cell"><div class="stat-cell-val" style="color:var(--yellow)" id="study-week-h">0</div><div class="stat-cell-label">今週(h)</div></div>
     </div>
-    <div class="section-title">CIA（公認内部監査人）</div>
+    <div class="section-title">CIA（公認内部監査人） <span class="human-badge">✏️ 進捗を更新</span></div>
     <div class="progress-card">
       <div class="progress-header">
         <div class="progress-title">📚 CIA 合格進捗</div>
@@ -1813,7 +1850,7 @@
         <input type="number" id="cia-hours" placeholder="0" style="background:none;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-size:14px;font-weight:700;width:50px;outline:none;text-align:center;font-family:inherit" oninput="saveCIAHours()" /> h
       </div>
     </div>
-    <div class="section-title">今日の学習ログ</div>
+    <div class="section-title">今日の学習ログ <span class="human-badge">✏️ 手入力</span></div>
     <div class="card">
       <div class="study-part">
         <div class="study-part-head">
@@ -1840,19 +1877,19 @@
         <div style="font-size:12px;color:var(--text3);margin-top:6px">0% 完了</div>
       </div>
     </div>
-    <div class="section-title">今日の学習メモ</div>
+    <div class="section-title">今日の学習メモ <span class="human-badge">✏️ 手入力</span></div>
     <textarea class="notes-area" id="study-notes" placeholder="学んだこと・気づき・重要ポイントをメモ..." rows="4" oninput="saveStudyNotes()"></textarea>
-    <div class="section-title">AIエージェント連携</div>
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Study Advisor Agent</div>
       <div class="ai-content">今週の学習ペース：目標10h/週に対して現在6h。週末に4h確保が必要。CIA Part1のコントロール評価セクションを優先推奨。過去問正答率：72%（目標75%）。弱点：ITリスク関連の設問。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
   </div>
 
   <!-- TAB: WORK (仕事) -->
   <div class="tab-content" id="tab-work">
-    <div class="section-title">ステータス</div>
+    <div class="section-title">ステータス <span class="human-badge">✏️ 設定</span></div>
     <div class="card" style="display:flex;align-items:center;gap:16px">
       <div style="flex:1">
         <div class="card-label">今週の業務負荷</div>
@@ -1863,7 +1900,7 @@
       </div>
       <input type="range" id="workload-range" min="0" max="100" value="65" oninput="updateWorkload()" style="width:80px;accent-color:var(--accent)" />
     </div>
-    <div class="section-title">TODO</div>
+    <div class="section-title">TODO <span class="human-badge">✏️ 手入力</span></div>
     <div id="work-todo-list"></div>
     <div class="add-row">
       <select id="work-priority" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none;font-size:13px">
@@ -1874,13 +1911,13 @@
       <input class="add-input" id="work-todo-input" placeholder="タスクを入力..." onkeydown="if(event.key==='Enter')addWorkTodo()" />
       <button class="add-btn" onclick="addWorkTodo()">+</button>
     </div>
-    <div class="section-title">仕事メモ</div>
+    <div class="section-title">仕事メモ <span class="human-badge">✏️ 手入力</span></div>
     <textarea class="notes-area" id="work-notes" placeholder="会議メモ・連絡事項・気づきなど..." rows="5" oninput="saveWorkNotes()"></textarea>
-    <div class="section-title">AIエージェント連携</div>
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Work Assistant Agent</div>
       <div class="ai-content">今週の優先事項：期末監査の調書レビューが金曜締切。火曜のクライアントMTG資料は前日までに準備を。未読メール12件のうち要対応3件を確認してください。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
   </div>
 
@@ -1921,17 +1958,17 @@
         <div class="news-summary">メタ分析の結果、各部位週2回の刺激が筋タンパク合成を最大化。分割法vs全身トレーニングの比較データを公開。</div>
       </div>
     </div>
-    <div class="section-title">AIエージェント連携</div>
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 News Curator Agent</div>
       <div class="ai-content">今日のあなた向けピックアップ：監査DXトレンド2件、投資信託リバランス記事1件、筋トレサイエンス1件を厳選。読書時間の目安：合計15分。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
   </div>
 
   <!-- TAB: IDEAS (アイデア) -->
   <div class="tab-content" id="tab-ideas">
-    <div class="section-title">アイデアを追加</div>
+    <div class="section-title">アイデアを追加 <span class="human-badge">✏️ 手入力</span></div>
     <div class="card">
       <textarea class="notes-area" id="idea-input" placeholder="思いついたアイデアを書く..." rows="3" style="margin-bottom:10px"></textarea>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
@@ -1969,46 +2006,58 @@
 
   <!-- TAB: AI AGENT INSTRUCTIONS -->
   <div class="tab-content" id="tab-aiagent">
-    <div class="section-title">エージェントを選択</div>
-    <div class="agent-select">
-      <button class="agent-btn active" onclick="selectAgent(this,'CEO')">👑 CEO Agent</button>
-      <button class="agent-btn" onclick="selectAgent(this,'CFO')">💰 CFO Agent</button>
-      <button class="agent-btn" onclick="selectAgent(this,'CHRO')">💚 CHRO Agent</button>
-      <button class="agent-btn" onclick="selectAgent(this,'CMO')">📣 CMO Agent</button>
-      <button class="agent-btn" onclick="selectAgent(this,'COO')">⚙️ COO Agent</button>
-      <button class="agent-btn" onclick="selectAgent(this,'Trainer')">🏋️ Trainer</button>
-      <button class="agent-btn" onclick="selectAgent(this,'Nutrition')">🥗 Nutrition</button>
-      <button class="agent-btn" onclick="selectAgent(this,'Study')">📚 Study</button>
-    </div>
-    <div class="section-title">指示内容</div>
-    <div class="card">
-      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">選択中: <strong id="selected-agent-name" style="color:var(--accent)">CEO Agent</strong></div>
+
+    <!-- ── あなた → AI（人が書く） ─────────────────────── -->
+    <div class="section-title">あなた → AI <span class="human-badge">✏️ あなたが入力</span></div>
+    <div class="card human-card">
+      <div class="input-hint">✏️ どのAIエージェントに何を依頼するかを書いてください</div>
+      <div class="agent-select">
+        <button class="agent-btn active" onclick="selectAgent(this,'CEO')">👑 CEO</button>
+        <button class="agent-btn" onclick="selectAgent(this,'CFO')">💰 CFO</button>
+        <button class="agent-btn" onclick="selectAgent(this,'CHRO')">💚 CHRO</button>
+        <button class="agent-btn" onclick="selectAgent(this,'CMO')">📣 CMO</button>
+        <button class="agent-btn" onclick="selectAgent(this,'COO')">⚙️ COO</button>
+        <button class="agent-btn" onclick="selectAgent(this,'Trainer')">🏋️ Trainer</button>
+        <button class="agent-btn" onclick="selectAgent(this,'Nutrition')">🥗 Nutrition</button>
+        <button class="agent-btn" onclick="selectAgent(this,'Study')">📚 Study</button>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">
+        選択中: <strong id="selected-agent-name" style="color:var(--accent)">CEO Agent</strong>
+      </div>
       <textarea class="instruction-box" id="ai-instruction" placeholder="エージェントへの指示を入力...&#10;例: 今月の財務サマリーを作成して、独立資金の進捗を計算してください。"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
-        <div style="font-size:12px;color:var(--text3)">実行頻度:</div>
+        <div style="font-size:12px;color:var(--text3)">頻度:</div>
         <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="setFreq(this,'once')">1回のみ</button>
         <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="setFreq(this,'daily')">毎日</button>
         <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="setFreq(this,'weekly')">毎週</button>
         <button class="btn" style="margin-left:auto" onclick="sendInstruction()">▶ 送信</button>
       </div>
     </div>
-    <div class="section-title">指示ログ</div>
-    <div id="instruction-log">
-      <div class="inst-log-item">
-        <div class="inst-log-meta"><span style="color:var(--accent)">CFO Agent</span><span>2026-04-03 09:00</span><span style="color:var(--green)">✓ 完了</span></div>
-        <div class="inst-log-text">今月の収支をまとめて、独立資金の進捗レポートを作成してください。</div>
+
+    <!-- ── AI → あなた（AIが書く・読むだけ） ──────────────── -->
+    <div class="section-title" style="margin-top:24px">AI → あなた <span class="ai-label-badge">🤖 AIが更新</span></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px">以下はAIエージェントが自動で書き込むエリアです。編集不要。</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 実行ログ</div>
+      <div id="instruction-log">
+        <div class="inst-log-item" style="margin-bottom:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--card2)">
+          <div class="inst-log-meta"><span style="color:var(--accent)">CFO Agent</span><span>2026-04-03 09:00</span><span style="color:var(--green)">✓ 完了</span></div>
+          <div class="inst-log-text">今月の収支をまとめて、独立資金の進捗レポートを作成してください。</div>
+        </div>
+        <div class="inst-log-item" style="margin-bottom:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--card2)">
+          <div class="inst-log-meta"><span style="color:var(--accent)">Trainer Agent</span><span>2026-04-02 07:00</span><span style="color:var(--green)">✓ 完了</span></div>
+          <div class="inst-log-text">今週のトレーニングメニューを体重72kg・筋肥大目的で最適化してください。</div>
+        </div>
       </div>
-      <div class="inst-log-item">
-        <div class="inst-log-meta"><span style="color:var(--accent)">Trainer Agent</span><span>2026-04-02 07:00</span><span style="color:var(--green)">✓ 完了</span></div>
-        <div class="inst-log-text">今週のトレーニングメニューを体重72kg・筋肥大目的で最適化してください。</div>
-      </div>
+      <div class="ai-updated" style="margin-top:4px">📡 各タブの「AI分析」エリアにも自動反映されます</div>
     </div>
+
   </div>
 
   <!-- TAB: FINANCE -->
   <div class="tab-content" id="tab-finance">
 
-    <div class="section-title">今月の収支</div>
+    <div class="section-title">今月の収支 <span class="human-badge">✏️ 月初に入力</span></div>
     <div class="card">
       <div class="fin-row">
         <div class="fin-label">💰 月収（手取り）</div>
@@ -2043,7 +2092,7 @@
       </div>
     </div>
 
-    <div class="section-title">資産スナップショット</div>
+    <div class="section-title">資産スナップショット <span class="human-badge">✏️ 月次更新</span></div>
     <div class="grid grid-2">
       <div class="metric-input-card">
         <div class="card-label">投資信託</div>
@@ -2079,11 +2128,11 @@
       </div>
     </div>
 
-    <div class="section-title">AIエージェント連携</div>
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Financial Advisor Agent</div>
       <div class="ai-content" id="ai-finance-content">今月の支出傾向：変動費が先月比 +8%。食費・交際費が主な増加要因と推測されます。投資積立は継続中。独立資金目標まで約24ヶ月のペース。</div>
-      <div class="ai-updated" id="ai-finance-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated" id="ai-finance-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
 
   </div>
@@ -2091,7 +2140,7 @@
   <!-- TAB: SHOPPING -->
   <div class="tab-content" id="tab-shopping">
 
-    <div class="section-title">買うべきもの</div>
+    <div class="section-title">買うべきもの <span class="human-badge">✏️ 手入力</span></div>
     <div id="must-list"></div>
     <div class="add-row">
       <input class="add-input" id="must-input" placeholder="アイテム名（例: プロテイン）" onkeydown="if(event.key==='Enter')addShopItem('must')" />
@@ -2099,7 +2148,7 @@
       <button class="add-btn" onclick="addShopItem('must')">+</button>
     </div>
 
-    <div class="section-title" style="margin-top:20px">ウィッシュリスト</div>
+    <div class="section-title" style="margin-top:20px">ウィッシュリスト <span class="human-badge">✏️ 手入力</span></div>
     <div id="want-list"></div>
     <div class="add-row">
       <input class="add-input" id="want-input" placeholder="欲しいもの（例: Apple Watch）" onkeydown="if(event.key==='Enter')addShopItem('want')" />
@@ -2107,7 +2156,7 @@
       <button class="add-btn" onclick="addShopItem('want')">+</button>
     </div>
 
-    <div class="section-title" style="margin-top:20px">いつか欲しいもの</div>
+    <div class="section-title" style="margin-top:20px">いつか欲しいもの <span class="human-badge">✏️ 手入力</span></div>
     <div id="someday-list"></div>
     <div class="add-row">
       <input class="add-input" id="someday-input" placeholder="将来的に検討（例: カメラ）" onkeydown="if(event.key==='Enter')addShopItem('someday')" />
@@ -2115,11 +2164,11 @@
       <button class="add-btn" onclick="addShopItem('someday')">+</button>
     </div>
 
-    <div class="section-title" style="margin-top:20px">AIエージェント連携</div>
+    <div class="section-title" style="margin-top:20px">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Shopping Advisor Agent</div>
       <div class="ai-content" id="ai-shop-content">おすすめ購入タイミング：プロテインはAmazonセール期間中（月初）が最安値になる傾向あり。トレーニングシューズは現在のリストに追加を推奨。予算内で優先順位の高いアイテムから購入することを提案。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
 
   </div>
@@ -2127,20 +2176,20 @@
   <!-- TAB: STYLE -->
   <div class="tab-content" id="tab-style">
 
-    <div class="section-title">今日のコーデ</div>
+    <div class="section-title">今日のコーデ <span class="human-badge">✏️ 手入力</span></div>
     <div class="card">
       <div class="card-label">メモ</div>
       <textarea class="notes-area" id="outfit-today" placeholder="例: ネイビースーツ + 白シャツ + ブラウンベルト" rows="3" oninput="saveStyleNote()"></textarea>
     </div>
 
-    <div class="section-title">AIスタイルアドバイス</div>
+    <div class="section-title">AIスタイルアドバイス <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Style Advisor Agent</div>
       <div class="ai-content" id="ai-style-content">【今週のアドバイス】監査法人勤務のビジネスカジュアルとして、ネイビー・グレー・チャコールのスーツを基軸に。清潔感が信頼につながる職場では、シャツの色は白・ライトブルーが◎。週末はオフホワイトのシャツ＋ダークデニムでスマートカジュアルに。178cm体型には縦ラインを強調するVネックも有効。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
 
-    <div class="section-title">シーズン別コーデノート</div>
+    <div class="section-title">シーズン別コーデノート <span class="human-badge">✏️ 手入力</span></div>
     <div class="grid grid-2">
       <div class="card" style="cursor:pointer" onclick="editSeasonNote('spring')">
         <div class="card-label">🌸 春</div>
@@ -2160,7 +2209,7 @@
       </div>
     </div>
 
-    <div class="section-title">ブランド・アイテムメモ</div>
+    <div class="section-title">ブランド・アイテムメモ <span class="human-badge">✏️ 手入力</span></div>
     <textarea class="notes-area" id="brand-notes" placeholder="気になるブランド、買おうと思っているアイテム、サイズメモなど..." rows="4" oninput="saveBrandNote()"></textarea>
 
   </div>
@@ -2168,7 +2217,7 @@
   <!-- TAB: SIDE BUSINESS -->
   <div class="tab-content" id="tab-side">
 
-    <div class="section-title">Webサイト更新状況</div>
+    <div class="section-title">Webサイト更新状況 <span class="ai-label-badge">🤖 AIが監視</span></div>
     <div class="site-card">
       <div class="site-header">
         <div>
@@ -2193,7 +2242,7 @@
       </div>
     </div>
 
-    <div class="section-title">副業収益トラッキング</div>
+    <div class="section-title">副業収益トラッキング <span class="human-badge">✏️ 月次更新</span></div>
     <div class="card">
       <div class="fin-row">
         <div class="fin-label">📅 今月の副業収益</div>
@@ -2217,21 +2266,21 @@
       </div>
     </div>
 
-    <div class="section-title">副業タスク</div>
+    <div class="section-title">副業タスク <span class="human-badge">✏️ 手入力</span></div>
     <div id="side-task-list"></div>
     <div class="add-row">
       <input class="add-input" id="side-task-input" placeholder="タスク（例: LP更新、記事執筆）" onkeydown="if(event.key==='Enter')addSideTask()" />
       <button class="add-btn" onclick="addSideTask()">+</button>
     </div>
 
-    <div class="section-title">AIエージェント連携</div>
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Business Monitor Agent</div>
       <div class="ai-content" id="ai-side-content">【サイト状況】ポートフォリオサイトの直近30日間のPVは前月比 +12%。問い合わせフォームからのリード2件を確認。TOPページの読み込み速度が改善余地あり（現在3.2秒 → 目標2秒以内）。SEO: "USCPA フリーランス" キーワードで順位上昇中。</div>
-      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
 
-    <div class="section-title">コンプライアンスメモ</div>
+    <div class="section-title">コンプライアンスメモ <span class="human-badge">✏️ 手入力</span></div>
     <div class="card" style="border-color:var(--yellow);background:var(--yellow-dim)">
       <div style="font-size:13px;color:var(--yellow);font-weight:600;margin-bottom:6px">⚠️ 就業規則確認事項</div>
       <textarea class="notes-area" id="compliance-note" placeholder="監査法人の副業規定・確認事項をメモ..." rows="3" oninput="saveComplianceNote()" style="background:rgba(0,0,0,0.2);border-color:rgba(245,158,11,0.3)"></textarea>
