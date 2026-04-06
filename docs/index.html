@@ -629,6 +629,147 @@
     .modal-hint { font-size: 12px; color: var(--text3); margin-top: -10px; margin-bottom: 14px; line-height: 1.5; }
     .modal-actions { display: flex; gap: 10px; margin-top: 4px; }
 
+    /* ─── WORKOUT ─── */
+    .workout-day-selector { display: grid; grid-template-columns: repeat(7,1fr); gap:6px; margin-bottom:12px; }
+    .wd-btn { aspect-ratio:1; border-radius:10px; border:2px solid var(--border); background:var(--card2); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; transition:all .15s; -webkit-user-select:none; }
+    .wd-btn .wd-day { font-size:11px; font-weight:700; color:var(--text3); }
+    .wd-btn .wd-dot { width:5px; height:5px; border-radius:50%; margin-top:3px; background:transparent; }
+    .wd-btn.active { border-color:var(--accent); background:rgba(124,58,237,.15); }
+    .wd-btn.active .wd-day { color:var(--accent); }
+    .wd-btn.active .wd-dot { background:var(--accent); }
+    .wd-btn.rest { border-color:var(--border); background:var(--card2); }
+    .ex-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; overflow:hidden; }
+    .ex-header { display:flex; align-items:center; gap:10px; padding:14px 14px 10px; }
+    .ex-name { flex:1; background:none; border:none; outline:none; font-size:15px; font-weight:700; color:var(--text); font-family:inherit; }
+    .ex-tag { font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; background:var(--accent-glow); color:var(--accent); }
+    .ex-del { font-size:18px; color:var(--text3); cursor:pointer; padding:0 4px; }
+    .set-table { width:100%; border-collapse:collapse; }
+    .set-table th { font-size:10px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.5px; padding:6px 10px; background:var(--card2); text-align:center; border-top:1px solid var(--border); }
+    .set-table td { padding:8px 6px; text-align:center; border-top:1px solid var(--border); }
+    .set-num { font-size:12px; color:var(--text3); font-weight:600; }
+    .num-ctrl { display:inline-flex; align-items:center; gap:0; }
+    .num-btn { width:28px; height:28px; border:1px solid var(--border); background:var(--card2); color:var(--text); font-size:16px; cursor:pointer; border-radius:6px; display:flex; align-items:center; justify-content:center; transition:all .1s; font-family:inherit; }
+    .num-btn:active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .num-val { width:44px; text-align:center; background:none; border:none; outline:none; font-size:14px; font-weight:700; color:var(--text); font-family:inherit; }
+    .set-done-chk { width:22px; height:22px; border:2px solid var(--border2); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; margin:0 auto; transition:all .15s; }
+    .set-done-chk.done { background:var(--green); border-color:var(--green); }
+    .set-done-chk.done::after { content:'✓'; font-size:13px; color:#fff; font-weight:700; }
+    .ex-footer { padding:8px 12px; border-top:1px solid var(--border); }
+    .add-set-btn { font-size:12px; font-weight:600; color:var(--accent); cursor:pointer; background:none; border:none; font-family:inherit; padding:2px 0; }
+
+    /* ─── PFC CHART ─── */
+    .pfc-wrap { display:flex; align-items:center; gap:24px; padding:8px 0; }
+    .pfc-ring-wrap { position:relative; flex-shrink:0; width:140px; height:140px; }
+    .pfc-ring-wrap canvas { position:absolute; inset:0; }
+    .pfc-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .pfc-kcal { font-size:26px; font-weight:800; letter-spacing:-1px; }
+    .pfc-kcal-label { font-size:11px; color:var(--text3); margin-top:-2px; }
+    .pfc-legend { flex:1; display:flex; flex-direction:column; gap:12px; }
+    .pfc-item { display:flex; align-items:center; gap:10px; }
+    .pfc-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .pfc-info { flex:1; }
+    .pfc-label { font-size:11px; color:var(--text3); font-weight:600; }
+    .pfc-val { font-size:18px; font-weight:700; letter-spacing:-.5px; }
+    .pfc-input-row { display:flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; margin-top:10px; }
+    .pfc-in-label { font-size:12px; font-weight:700; width:20px; }
+    .pfc-in { flex:1; background:none; border:none; outline:none; font-size:15px; font-weight:700; color:var(--text); font-family:inherit; text-align:right; width:50px; }
+    .pfc-unit { font-size:12px; color:var(--text3); }
+    .pfc-pct { font-size:11px; color:var(--text3); width:35px; text-align:right; }
+    .meal-section { margin-bottom:12px; }
+    .meal-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--card2); border-radius:var(--radius-sm) var(--radius-sm) 0 0; border:1px solid var(--border); cursor:pointer; }
+    .meal-title { font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .meal-kcal { font-size:13px; color:var(--text3); }
+    .meal-body { border:1px solid var(--border); border-top:none; border-radius:0 0 var(--radius-sm) var(--radius-sm); padding:8px; }
+    .meal-item-row { display:flex; align-items:center; gap:8px; padding:6px 4px; border-bottom:1px solid var(--border); }
+    .meal-item-row:last-of-type { border-bottom:none; }
+    .meal-item-name { flex:1; background:none; border:none; outline:none; font-size:13px; color:var(--text); font-family:inherit; }
+    .meal-item-kcal { width:55px; background:none; border:none; border-bottom:1px solid var(--border2); outline:none; font-size:13px; color:var(--text); font-family:inherit; text-align:right; }
+    .meal-item-del { font-size:16px; color:var(--text3); cursor:pointer; padding:0 2px; }
+
+    /* ─── SCHEDULE ─── */
+    .mini-cal { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+    .cal-header-cell { text-align:center; font-size:10px; font-weight:700; color:var(--text3); padding:4px 0; }
+    .cal-cell { aspect-ratio:1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--text2); cursor:pointer; transition:all .15s; }
+    .cal-cell:empty { background:transparent; cursor:default; }
+    .cal-cell.today { background:var(--accent); color:#fff; font-weight:700; }
+    .cal-cell.has-event { position:relative; }
+    .cal-cell.has-event::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--green); }
+    .cal-cell.other-month { color:var(--text3); opacity:.4; }
+    .schedule-event { display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--card2); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; }
+    .event-time { font-size:12px; font-weight:700; color:var(--text3); white-space:nowrap; min-width:44px; }
+    .event-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .event-text { flex:1; font-size:14px; color:var(--text); }
+    .event-del { font-size:16px; color:var(--text3); cursor:pointer; }
+
+    /* ─── STUDY ─── */
+    .study-part { background:var(--card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:8px; }
+    .study-part-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .study-part-name { font-size:14px; font-weight:700; }
+    .study-part-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; }
+    .badge-pass { background:var(--green-dim); color:var(--green); }
+    .badge-study { background:var(--blue-dim); color:var(--blue); }
+    .badge-pending { background:var(--card); color:var(--text3); border:1px solid var(--border); }
+
+    /* ─── WORK ─── */
+    .work-todo { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--card2); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:7px; transition:all .2s; }
+    .work-todo.done-item { opacity:.45; }
+    .work-todo.done-item .work-todo-text { text-decoration:line-through; color:var(--text3); }
+    .work-todo-check { width:22px; height:22px; border:2px solid var(--border2); border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
+    .work-todo-check.done { background:var(--green); border-color:var(--green); }
+    .work-todo-check.done::after { content:'✓'; font-size:12px; color:#fff; font-weight:700; }
+    .work-todo-text { flex:1; font-size:14px; color:var(--text); }
+    .work-todo-del { font-size:16px; color:var(--text3); cursor:pointer; }
+    .work-priority-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .dot-high { background:var(--red); }
+    .dot-mid { background:var(--yellow); }
+    .dot-low { background:var(--green); }
+
+    /* ─── NEWS ─── */
+    .news-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; transition:border-color .2s; cursor:pointer; }
+    .news-card:active { border-color:var(--accent); }
+    .news-meta { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+    .news-cat { font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; }
+    .cat-biz { background:var(--blue-dim); color:var(--blue); }
+    .cat-health { background:var(--green-dim); color:var(--green); }
+    .cat-tech { background:rgba(168,85,247,.15); color:#a855f7; }
+    .cat-fin { background:var(--yellow-dim); color:var(--yellow); }
+    .cat-gen { background:var(--card2); color:var(--text3); border:1px solid var(--border); }
+    .news-source { font-size:11px; color:var(--text3); }
+    .news-time { font-size:11px; color:var(--text3); margin-left:auto; }
+    .news-title { font-size:14px; font-weight:700; line-height:1.4; margin-bottom:4px; }
+    .news-summary { font-size:12px; color:var(--text2); line-height:1.6; }
+    .cat-filter { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+    .cat-pill { font-size:12px; font-weight:600; padding:6px 14px; border-radius:99px; border:1px solid var(--border); background:var(--card); color:var(--text3); cursor:pointer; transition:all .15s; }
+    .cat-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+    /* ─── IDEAS ─── */
+    .idea-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; }
+    .idea-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+    .idea-cat-tag { font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; }
+    .idea-star { font-size:18px; cursor:pointer; margin-left:auto; }
+    .idea-text { font-size:14px; color:var(--text); line-height:1.6; background:none; border:none; outline:none; width:100%; font-family:inherit; resize:none; }
+    .idea-date { font-size:11px; color:var(--text3); margin-top:8px; }
+    .idea-del { font-size:14px; color:var(--text3); cursor:pointer; margin-left:8px; }
+
+    /* ─── AI INSTRUCTION ─── */
+    .agent-select { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    .agent-btn { padding:8px 14px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--card2); color:var(--text3); font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all .15s; display:flex; align-items:center; gap:6px; }
+    .agent-btn.active { border-color:var(--accent); background:rgba(124,58,237,.12); color:var(--accent); }
+    .instruction-box { background:var(--card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; min-height:120px; font-size:14px; color:var(--text); font-family:inherit; resize:none; width:100%; outline:none; line-height:1.7; transition:border-color .2s; }
+    .instruction-box:focus { border-color:var(--accent); }
+    .inst-log-item { padding:12px 14px; background:var(--card2); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:8px; }
+    .inst-log-meta { display:flex; align-items:center; gap:8px; margin-bottom:4px; font-size:11px; color:var(--text3); }
+    .inst-log-text { font-size:13px; color:var(--text2); line-height:1.5; }
+
+    /* ─── HEIGHT / SKIN / HAIR ─── */
+    .routine-item { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border); }
+    .routine-item:last-child { border-bottom:none; }
+    .routine-check { width:24px; height:24px; border:2px solid var(--border2); border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
+    .routine-check.done { background:var(--green); border-color:var(--green); }
+    .routine-check.done::after { content:'✓'; font-size:13px; color:#fff; font-weight:700; }
+    .routine-label { flex:1; font-size:14px; color:var(--text2); }
+    .routine-tip { font-size:11px; color:var(--text3); }
+
     /* ─── AI AGENT CARD ─── */
     .ai-card {
       border: 2px dashed var(--border2);
@@ -810,13 +951,21 @@
   <div class="section-title" style="margin-top:20px">セクション</div>
   <div class="tabs">
     <div class="tab active" onclick="switchTab('today')">📋 今日</div>
-    <div class="tab" onclick="switchTab('health')">💪 健康</div>
+    <div class="tab" onclick="switchTab('schedule')">📅 スケジュール</div>
+    <div class="tab" onclick="switchTab('gym')">🏋️ 筋トレ</div>
+    <div class="tab" onclick="switchTab('meal')">🍽️ 食事</div>
+    <div class="tab" onclick="switchTab('health')">💚 健康</div>
+    <div class="tab" onclick="switchTab('study')">📚 勉強</div>
+    <div class="tab" onclick="switchTab('work')">💼 仕事</div>
     <div class="tab" onclick="switchTab('goals')">🎯 目標</div>
-    <div class="tab" onclick="switchTab('weekly')">📅 週間</div>
+    <div class="tab" onclick="switchTab('weekly')">📊 週間</div>
     <div class="tab" onclick="switchTab('finance')">💴 財務</div>
     <div class="tab" onclick="switchTab('shopping')">🛒 リスト</div>
     <div class="tab" onclick="switchTab('style')">👔 スタイル</div>
-    <div class="tab" onclick="switchTab('side')">💼 副業</div>
+    <div class="tab" onclick="switchTab('side')">🚀 副業</div>
+    <div class="tab" onclick="switchTab('news')">📰 ニュース</div>
+    <div class="tab" onclick="switchTab('ideas')">💡 アイデア</div>
+    <div class="tab" onclick="switchTab('aiagent')">🤖 AI指示</div>
   </div>
 
   <!-- TAB: TODAY -->
@@ -968,6 +1117,118 @@
       </div>
     </div>
 
+    <div class="section-title">📏 身長を伸ばす習慣</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="flex:1"><div class="card-label">現在の身長</div>
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <input type="number" step="0.1" id="height-now" value="178.9" style="background:none;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-size:24px;font-weight:700;width:70px;outline:none;font-family:inherit" />
+            <span style="font-size:14px;color:var(--text3)">cm</span>
+          </div>
+        </div>
+        <div style="flex:1"><div class="card-label">目標身長</div>
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <input type="number" step="0.1" id="height-goal" value="180.0" style="background:none;border:none;border-bottom:1px solid var(--border2);color:var(--accent);font-size:24px;font-weight:700;width:70px;outline:none;font-family:inherit" />
+            <span style="font-size:14px;color:var(--text3)">cm</span>
+          </div>
+        </div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">😴 7時間以上の睡眠</div>
+        <div class="routine-tip">成長ホルモン分泌</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🥛 カルシウム・タンパク質摂取</div>
+        <div class="routine-tip">骨・筋肉の材料</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🙆 背伸びストレッチ（朝・夜）</div>
+        <div class="routine-tip">脊椎の柔軟化</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🏋️ ぶら下がり・懸垂（2分）</div>
+        <div class="routine-tip">脊椎の伸長</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🚶 姿勢チェック・猫背改善</div>
+        <div class="routine-tip">見た目+2cm効果</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🦘 ジャンプ運動（縄跳び等）</div>
+        <div class="routine-tip">骨端刺激</div>
+      </div>
+    </div>
+
+    <div class="section-title">🧴 スキンケアルーティン</div>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:8px">朝のケア</div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">💧 洗顔</div>
+        <div class="routine-tip">泡で優しく</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">💦 化粧水</div>
+        <div class="routine-tip">ハタチの保湿</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🌿 乳液・保湿クリーム</div>
+        <div class="routine-tip">水分を閉じ込める</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">☀️ 日焼け止め SPF50+</div>
+        <div class="routine-tip">老化防止の最重要</div>
+      </div>
+      <div class="card-label" style="margin:14px 0 8px">夜のケア</div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🫧 クレンジング</div>
+        <div class="routine-tip">汚れを落とす</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">💧 洗顔 → 化粧水</div>
+        <div class="routine-tip">毎晩ルーティン</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">✨ 美容液・乳液</div>
+        <div class="routine-tip">ターンオーバー促進</div>
+      </div>
+    </div>
+
+    <div class="section-title">💇 ヘアスタイル</div>
+    <div class="card">
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🚿 シャンプー・コンディショナー</div>
+        <div class="routine-tip">頭皮ケア</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">💨 ドライヤー（根元から乾かす）</div>
+        <div class="routine-tip">ダメージ防止</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🌟 ヘアオイル・スタイリング</div>
+        <div class="routine-tip">ツヤと質感</div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="card-label">スタイルメモ</div>
+        <textarea class="notes-area" id="hair-notes" placeholder="好みのスタイル、美容師へのオーダー、試したいアレンジなど..." rows="3" style="margin-top:6px" oninput="saveHairNotes()"></textarea>
+      </div>
+    </div>
+
   </div>
 
   <!-- TAB: GOALS -->
@@ -1098,6 +1359,429 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- TAB: SCHEDULE -->
+  <div class="tab-content" id="tab-schedule">
+    <div class="section-title">今月のカレンダー</div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <button onclick="prevMonth()" style="background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:6px 12px;cursor:pointer;font-family:inherit">‹</button>
+        <div style="font-size:15px;font-weight:700" id="cal-month-label"></div>
+        <button onclick="nextMonth()" style="background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:6px 12px;cursor:pointer;font-family:inherit">›</button>
+      </div>
+      <div class="mini-cal">
+        <div class="cal-header-cell" style="color:var(--red)">日</div>
+        <div class="cal-header-cell">月</div><div class="cal-header-cell">火</div>
+        <div class="cal-header-cell">水</div><div class="cal-header-cell">木</div>
+        <div class="cal-header-cell">金</div>
+        <div class="cal-header-cell" style="color:var(--blue)">土</div>
+      </div>
+      <div class="mini-cal" id="cal-grid" style="margin-top:4px"></div>
+    </div>
+    <div class="section-title">今日の予定</div>
+    <div id="schedule-events"></div>
+    <div class="add-row">
+      <input class="add-input" id="event-time" type="time" style="width:100px;flex:none" />
+      <input class="add-input" id="event-text" placeholder="予定を入力..." onkeydown="if(event.key==='Enter')addEvent()" />
+      <select id="event-color" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none">
+        <option value="var(--accent)">仕事</option>
+        <option value="var(--green)">健康</option>
+        <option value="var(--yellow)">個人</option>
+        <option value="var(--red)">重要</option>
+      </select>
+      <button class="add-btn" onclick="addEvent()">+</button>
+    </div>
+  </div>
+
+  <!-- TAB: GYM (筋トレ) -->
+  <div class="tab-content" id="tab-gym">
+    <div class="section-title">トレーニング日設定</div>
+    <div class="card">
+      <div class="workout-day-selector" id="wd-selector">
+        <div class="wd-btn active" onclick="toggleTrainingDay(0)" id="wd-0"><div class="wd-day">月</div><div class="wd-dot"></div></div>
+        <div class="wd-btn rest"   onclick="toggleTrainingDay(1)" id="wd-1"><div class="wd-day">火</div><div class="wd-dot"></div></div>
+        <div class="wd-btn active" onclick="toggleTrainingDay(2)" id="wd-2"><div class="wd-day">水</div><div class="wd-dot"></div></div>
+        <div class="wd-btn rest"   onclick="toggleTrainingDay(3)" id="wd-3"><div class="wd-day">木</div><div class="wd-dot"></div></div>
+        <div class="wd-btn active" onclick="toggleTrainingDay(4)" id="wd-4"><div class="wd-day">金</div><div class="wd-dot"></div></div>
+        <div class="wd-btn rest"   onclick="toggleTrainingDay(5)" id="wd-5"><div class="wd-day">土</div><div class="wd-dot"></div></div>
+        <div class="wd-btn rest"   onclick="toggleTrainingDay(6)" id="wd-6"><div class="wd-day">日</div><div class="wd-dot"></div></div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);text-align:center">タップでオン/オフ切替 · 紫=トレーニング日</div>
+    </div>
+    <div class="section-title">今日のメニュー</div>
+    <div id="exercise-list"></div>
+    <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+      <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('ベンチプレス','胸')">+ ベンチプレス</button>
+      <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('スクワット','脚')">+ スクワット</button>
+      <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('デッドリフト','背中')">+ デッドリフト</button>
+      <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('懸垂','背中')">+ 懸垂</button>
+      <button class="btn btn-ghost" style="font-size:13px" onclick="addExercise('','')">+ カスタム</button>
+    </div>
+    <div class="section-title" style="margin-top:16px">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Trainer Agent</div>
+      <div class="ai-content">今週のボリューム：胸 12sets / 背中 9sets / 脚 6sets。回復を考慮すると明日は脚トレ推奨。ベンチプレスは先週比+2.5kg達成。次のマイルストーン：100kg × 5reps。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+  </div>
+
+  <!-- TAB: MEAL (食事) -->
+  <div class="tab-content" id="tab-meal">
+    <div class="section-title">今日のPFCバランス</div>
+    <div class="card">
+      <div class="pfc-wrap">
+        <div class="pfc-ring-wrap">
+          <canvas id="pfc-canvas" width="140" height="140"></canvas>
+          <div class="pfc-center">
+            <div class="pfc-kcal" id="pfc-total-kcal">0</div>
+            <div class="pfc-kcal-label">kcal</div>
+          </div>
+        </div>
+        <div class="pfc-legend">
+          <div class="pfc-item">
+            <div class="pfc-dot" style="background:var(--blue)"></div>
+            <div class="pfc-info">
+              <div class="pfc-label">タンパク質</div>
+              <div class="pfc-val" id="pfc-p-val" style="color:var(--blue)">0g</div>
+            </div>
+            <div class="pfc-pct" id="pfc-p-pct">0%</div>
+          </div>
+          <div class="pfc-item">
+            <div class="pfc-dot" style="background:var(--yellow)"></div>
+            <div class="pfc-info">
+              <div class="pfc-label">脂質</div>
+              <div class="pfc-val" id="pfc-f-val" style="color:var(--yellow)">0g</div>
+            </div>
+            <div class="pfc-pct" id="pfc-f-pct">0%</div>
+          </div>
+          <div class="pfc-item">
+            <div class="pfc-dot" style="background:var(--green)"></div>
+            <div class="pfc-info">
+              <div class="pfc-label">炭水化物</div>
+              <div class="pfc-val" id="pfc-c-val" style="color:var(--green)">0g</div>
+            </div>
+            <div class="pfc-pct" id="pfc-c-pct">0%</div>
+          </div>
+        </div>
+      </div>
+      <div class="pfc-input-row">
+        <div class="pfc-in-label" style="color:var(--blue)">P</div>
+        <input class="pfc-in" type="number" id="pfc-p" placeholder="0" oninput="updatePFC()" />
+        <div class="pfc-unit">g</div>
+      </div>
+      <div class="pfc-input-row">
+        <div class="pfc-in-label" style="color:var(--yellow)">F</div>
+        <input class="pfc-in" type="number" id="pfc-f" placeholder="0" oninput="updatePFC()" />
+        <div class="pfc-unit">g</div>
+      </div>
+      <div class="pfc-input-row">
+        <div class="pfc-in-label" style="color:var(--green)">C</div>
+        <input class="pfc-in" type="number" id="pfc-c" placeholder="0" oninput="updatePFC()" />
+        <div class="pfc-unit">g</div>
+      </div>
+    </div>
+    <div class="section-title">食事ログ</div>
+    <div class="meal-section">
+      <div class="meal-header" onclick="toggleMealSection('breakfast')">
+        <div class="meal-title">🌅 朝食</div>
+        <div class="meal-kcal" id="meal-kcal-breakfast">0 kcal</div>
+      </div>
+      <div class="meal-body" id="meal-body-breakfast"><div id="meal-items-breakfast"></div>
+        <div class="add-row" style="margin-top:6px">
+          <input class="add-input" id="meal-name-breakfast" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('breakfast')" />
+          <input class="add-input" type="number" id="meal-kcal-in-breakfast" placeholder="kcal" style="width:80px" />
+          <button class="add-btn" onclick="addMealItem('breakfast')">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-header" onclick="toggleMealSection('lunch')">
+        <div class="meal-title">☀️ 昼食</div>
+        <div class="meal-kcal" id="meal-kcal-lunch">0 kcal</div>
+      </div>
+      <div class="meal-body" id="meal-body-lunch"><div id="meal-items-lunch"></div>
+        <div class="add-row" style="margin-top:6px">
+          <input class="add-input" id="meal-name-lunch" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('lunch')" />
+          <input class="add-input" type="number" id="meal-kcal-in-lunch" placeholder="kcal" style="width:80px" />
+          <button class="add-btn" onclick="addMealItem('lunch')">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-header" onclick="toggleMealSection('snack')">
+        <div class="meal-title">🍫 おやつ</div>
+        <div class="meal-kcal" id="meal-kcal-snack">0 kcal</div>
+      </div>
+      <div class="meal-body" id="meal-body-snack"><div id="meal-items-snack"></div>
+        <div class="add-row" style="margin-top:6px">
+          <input class="add-input" id="meal-name-snack" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('snack')" />
+          <input class="add-input" type="number" id="meal-kcal-in-snack" placeholder="kcal" style="width:80px" />
+          <button class="add-btn" onclick="addMealItem('snack')">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-header" onclick="toggleMealSection('dinner')">
+        <div class="meal-title">🌙 夕食</div>
+        <div class="meal-kcal" id="meal-kcal-dinner">0 kcal</div>
+      </div>
+      <div class="meal-body" id="meal-body-dinner"><div id="meal-items-dinner"></div>
+        <div class="add-row" style="margin-top:6px">
+          <input class="add-input" id="meal-name-dinner" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('dinner')" />
+          <input class="add-input" type="number" id="meal-kcal-in-dinner" placeholder="kcal" style="width:80px" />
+          <button class="add-btn" onclick="addMealItem('dinner')">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="meal-section">
+      <div class="meal-header" onclick="toggleMealSection('protein')">
+        <div class="meal-title">💪 プロテイン・サプリ</div>
+        <div class="meal-kcal" id="meal-kcal-protein">0 kcal</div>
+      </div>
+      <div class="meal-body" id="meal-body-protein"><div id="meal-items-protein"></div>
+        <div class="add-row" style="margin-top:6px">
+          <input class="add-input" id="meal-name-protein" placeholder="プロテイン名" onkeydown="if(event.key==='Enter')addMealItem('protein')" />
+          <input class="add-input" type="number" id="meal-kcal-in-protein" placeholder="kcal" style="width:80px" />
+          <button class="add-btn" onclick="addMealItem('protein')">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="section-title">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Nutrition Agent</div>
+      <div class="ai-content">今日の摂取状況：タンパク質目標（体重×2g = 144g）に対して現在82g。夕食でプロテイン30g追加を推奨。脂質は目標内。炭水化物はトレーニング後の摂取タイミングを最適化してください。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+  </div>
+
+  <!-- TAB: STUDY (勉強) -->
+  <div class="tab-content" id="tab-study">
+    <div class="section-title">学習サマリー</div>
+    <div class="stat-strip">
+      <div class="stat-cell"><div class="stat-cell-val" style="color:var(--accent)" id="study-total-h">0</div><div class="stat-cell-label">累計時間</div></div>
+      <div class="stat-cell"><div class="stat-cell-val" style="color:var(--green)" id="study-streak-d">0</div><div class="stat-cell-label">連続日数</div></div>
+      <div class="stat-cell"><div class="stat-cell-val" style="color:var(--blue)" id="study-today-h">0</div><div class="stat-cell-label">今日(h)</div></div>
+      <div class="stat-cell"><div class="stat-cell-val" style="color:var(--yellow)" id="study-week-h">0</div><div class="stat-cell-label">今週(h)</div></div>
+    </div>
+    <div class="section-title">CIA（公認内部監査人）</div>
+    <div class="progress-card">
+      <div class="progress-header">
+        <div class="progress-title">📚 CIA 合格進捗</div>
+        <div class="progress-pct" id="cia-pct">0%</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="cia-bar" style="width:0%;background:linear-gradient(90deg,var(--accent),#a855f7)"></div>
+      </div>
+      <div class="cia-detail">
+        <div class="cia-part" id="cia-p1" onclick="toggleCIA(1)">
+          <div class="cia-part-name">Part 1</div>
+          <div class="cia-part-status">⬜</div>
+        </div>
+        <div class="cia-part" id="cia-p2" onclick="toggleCIA(2)">
+          <div class="cia-part-name">Part 2</div>
+          <div class="cia-part-status">⬜</div>
+        </div>
+        <div class="cia-part" id="cia-p3" onclick="toggleCIA(3)">
+          <div class="cia-part-name">Part 3</div>
+          <div class="cia-part-status">⬜</div>
+        </div>
+      </div>
+      <div class="progress-detail" style="margin-top:12px">
+        学習時間累計:
+        <input type="number" id="cia-hours" placeholder="0" style="background:none;border:none;border-bottom:1px solid var(--border2);color:var(--text);font-size:14px;font-weight:700;width:50px;outline:none;text-align:center;font-family:inherit" oninput="saveCIAHours()" /> h
+      </div>
+    </div>
+    <div class="section-title">今日の学習ログ</div>
+    <div class="card">
+      <div class="study-part">
+        <div class="study-part-head">
+          <div class="study-part-name">📖 CIA Part 1 — 内部監査の基礎</div>
+          <span class="study-part-badge badge-study">学習中</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:35%;background:var(--accent)"></div></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px">35% 完了 · 残り推定 28h</div>
+      </div>
+      <div class="study-part">
+        <div class="study-part-head">
+          <div class="study-part-name">📖 CIA Part 2 — 内部監査の実務</div>
+          <span class="study-part-badge badge-pending">未着手</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--blue)"></div></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px">0% 完了</div>
+      </div>
+      <div class="study-part">
+        <div class="study-part-head">
+          <div class="study-part-name">📖 CIA Part 3 — ビジネス知識</div>
+          <span class="study-part-badge badge-pending">未着手</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:0%;background:var(--green)"></div></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px">0% 完了</div>
+      </div>
+    </div>
+    <div class="section-title">今日の学習メモ</div>
+    <textarea class="notes-area" id="study-notes" placeholder="学んだこと・気づき・重要ポイントをメモ..." rows="4" oninput="saveStudyNotes()"></textarea>
+    <div class="section-title">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Study Advisor Agent</div>
+      <div class="ai-content">今週の学習ペース：目標10h/週に対して現在6h。週末に4h確保が必要。CIA Part1のコントロール評価セクションを優先推奨。過去問正答率：72%（目標75%）。弱点：ITリスク関連の設問。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+  </div>
+
+  <!-- TAB: WORK (仕事) -->
+  <div class="tab-content" id="tab-work">
+    <div class="section-title">ステータス</div>
+    <div class="card" style="display:flex;align-items:center;gap:16px">
+      <div style="flex:1">
+        <div class="card-label">今週の業務負荷</div>
+        <div class="progress-track" style="margin-top:8px">
+          <div class="progress-fill" id="workload-bar" style="width:65%;background:linear-gradient(90deg,var(--green),var(--yellow))"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px" id="workload-label">通常 (65%)</div>
+      </div>
+      <input type="range" id="workload-range" min="0" max="100" value="65" oninput="updateWorkload()" style="width:80px;accent-color:var(--accent)" />
+    </div>
+    <div class="section-title">TODO</div>
+    <div id="work-todo-list"></div>
+    <div class="add-row">
+      <select id="work-priority" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none;font-size:13px">
+        <option value="high">🔴 高</option>
+        <option value="mid" selected>🟡 中</option>
+        <option value="low">🟢 低</option>
+      </select>
+      <input class="add-input" id="work-todo-input" placeholder="タスクを入力..." onkeydown="if(event.key==='Enter')addWorkTodo()" />
+      <button class="add-btn" onclick="addWorkTodo()">+</button>
+    </div>
+    <div class="section-title">仕事メモ</div>
+    <textarea class="notes-area" id="work-notes" placeholder="会議メモ・連絡事項・気づきなど..." rows="5" oninput="saveWorkNotes()"></textarea>
+    <div class="section-title">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Work Assistant Agent</div>
+      <div class="ai-content">今週の優先事項：期末監査の調書レビューが金曜締切。火曜のクライアントMTG資料は前日までに準備を。未読メール12件のうち要対応3件を確認してください。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+  </div>
+
+  <!-- TAB: NEWS (ニュース) -->
+  <div class="tab-content" id="tab-news">
+    <div class="section-title">カテゴリ</div>
+    <div class="cat-filter">
+      <div class="cat-pill active" onclick="filterNews('all')">すべて</div>
+      <div class="cat-pill" onclick="filterNews('biz')">ビジネス</div>
+      <div class="cat-pill" onclick="filterNews('health')">健康</div>
+      <div class="cat-pill" onclick="filterNews('tech')">テック</div>
+      <div class="cat-pill" onclick="filterNews('fin')">経済</div>
+    </div>
+    <div id="news-list">
+      <div class="news-card" data-cat="biz">
+        <div class="news-meta"><span class="news-cat cat-biz">ビジネス</span><span class="news-source">日経ビジネス</span><span class="news-time">2時間前</span></div>
+        <div class="news-title">監査法人のDX推進——AIによる監査効率化の最前線</div>
+        <div class="news-summary">大手監査法人がAIを活用した自動化ツールを導入し、監査業務の生産性が30%向上。若手スタッフへの影響と新たなスキル要件を解説。</div>
+      </div>
+      <div class="news-card" data-cat="health">
+        <div class="news-meta"><span class="news-cat cat-health">健康</span><span class="news-source">Healthline</span><span class="news-time">4時間前</span></div>
+        <div class="news-title">睡眠と筋肉合成の関係——成長ホルモンの最適分泌タイミング</div>
+        <div class="news-summary">研究によると就寝後1〜3時間が成長ホルモン分泌のピーク。22〜24時就寝が体組成改善に最も効果的であることが判明。</div>
+      </div>
+      <div class="news-card" data-cat="fin">
+        <div class="news-meta"><span class="news-cat cat-fin">経済</span><span class="news-source">Bloomberg</span><span class="news-time">6時間前</span></div>
+        <div class="news-title">新NISAの活用戦略——積立と成長投資枠の最適配分</div>
+        <div class="news-summary">2024年から始まった新NISAの非課税枠を最大化するための実践的な投資戦略。インデックス投資との組み合わせ方を専門家が解説。</div>
+      </div>
+      <div class="news-card" data-cat="tech">
+        <div class="news-meta"><span class="news-cat cat-tech">テック</span><span class="news-source">TechCrunch</span><span class="news-time">昨日</span></div>
+        <div class="news-title">Claude 3.7——AIエージェントの実用化が本格加速</div>
+        <div class="news-summary">Anthropicの最新モデルがビジネス現場での自律的タスク実行を可能に。監査・財務分野での活用事例が急増している。</div>
+      </div>
+      <div class="news-card" data-cat="health">
+        <div class="news-meta"><span class="news-cat cat-health">健康</span><span class="news-source">筋トレ研究所</span><span class="news-time">昨日</span></div>
+        <div class="news-title">20代男性の筋肥大に最適なトレーニング頻度——週3〜4回が最適解</div>
+        <div class="news-summary">メタ分析の結果、各部位週2回の刺激が筋タンパク合成を最大化。分割法vs全身トレーニングの比較データを公開。</div>
+      </div>
+    </div>
+    <div class="section-title">AIエージェント連携</div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 News Curator Agent</div>
+      <div class="ai-content">今日のあなた向けピックアップ：監査DXトレンド2件、投資信託リバランス記事1件、筋トレサイエンス1件を厳選。読書時間の目安：合計15分。</div>
+      <div class="ai-updated">仮データ — AIエージェント連携後に自動更新</div>
+    </div>
+  </div>
+
+  <!-- TAB: IDEAS (アイデア) -->
+  <div class="tab-content" id="tab-ideas">
+    <div class="section-title">アイデアを追加</div>
+    <div class="card">
+      <textarea class="notes-area" id="idea-input" placeholder="思いついたアイデアを書く..." rows="3" style="margin-bottom:10px"></textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="idea-cat-select" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:8px 10px;font-family:inherit;outline:none;font-size:13px">
+          <option value="biz">💼 ビジネス</option>
+          <option value="side">🚀 副業</option>
+          <option value="invest">💰 投資</option>
+          <option value="life">🌱 ライフ</option>
+          <option value="other">💡 その他</option>
+        </select>
+        <button class="btn" onclick="addIdea()">アイデアを保存</button>
+      </div>
+    </div>
+    <div class="section-title">アイデア一覧</div>
+    <div id="ideas-list">
+      <div class="idea-card">
+        <div class="idea-header">
+          <span class="idea-cat-tag" style="background:var(--blue-dim);color:var(--blue)">💼 ビジネス</span>
+          <span class="idea-star">⭐</span>
+        </div>
+        <div style="font-size:14px;color:var(--text);line-height:1.6">監査法人での経験を活かした内部統制コンサル。中小企業向けに月次顧問契約で副業開始できないか。</div>
+        <div class="idea-date">2026-04-01</div>
+      </div>
+      <div class="idea-card">
+        <div class="idea-header">
+          <span class="idea-cat-tag" style="background:var(--yellow-dim);color:var(--yellow)">💰 投資</span>
+          <span class="idea-star">☆</span>
+        </div>
+        <div style="font-size:14px;color:var(--text);line-height:1.6">不動産投資の次のステップ——区分マンション投資について調査する。キャッシュフローの試算を行う。</div>
+        <div class="idea-date">2026-03-28</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost" onclick="addIdea()" style="margin-top:4px;width:100%;justify-content:center">+ 新しいアイデア</button>
+  </div>
+
+  <!-- TAB: AI AGENT INSTRUCTIONS -->
+  <div class="tab-content" id="tab-aiagent">
+    <div class="section-title">エージェントを選択</div>
+    <div class="agent-select">
+      <button class="agent-btn active" onclick="selectAgent(this,'CEO')">👑 CEO Agent</button>
+      <button class="agent-btn" onclick="selectAgent(this,'CFO')">💰 CFO Agent</button>
+      <button class="agent-btn" onclick="selectAgent(this,'CHRO')">💚 CHRO Agent</button>
+      <button class="agent-btn" onclick="selectAgent(this,'CMO')">📣 CMO Agent</button>
+      <button class="agent-btn" onclick="selectAgent(this,'COO')">⚙️ COO Agent</button>
+      <button class="agent-btn" onclick="selectAgent(this,'Trainer')">🏋️ Trainer</button>
+      <button class="agent-btn" onclick="selectAgent(this,'Nutrition')">🥗 Nutrition</button>
+      <button class="agent-btn" onclick="selectAgent(this,'Study')">📚 Study</button>
+    </div>
+    <div class="section-title">指示内容</div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">選択中: <strong id="selected-agent-name" style="color:var(--accent)">CEO Agent</strong></div>
+      <textarea class="instruction-box" id="ai-instruction" placeholder="エージェントへの指示を入力...&#10;例: 今月の財務サマリーを作成して、独立資金の進捗を計算してください。"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
+        <div style="font-size:12px;color:var(--text3)">実行頻度:</div>
+        <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="setFreq(this,'once')">1回のみ</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="setFreq(this,'daily')">毎日</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:6px 12px" onclick="setFreq(this,'weekly')">毎週</button>
+        <button class="btn" style="margin-left:auto" onclick="sendInstruction()">▶ 送信</button>
+      </div>
+    </div>
+    <div class="section-title">指示ログ</div>
+    <div id="instruction-log">
+      <div class="inst-log-item">
+        <div class="inst-log-meta"><span style="color:var(--accent)">CFO Agent</span><span>2026-04-03 09:00</span><span style="color:var(--green)">✓ 完了</span></div>
+        <div class="inst-log-text">今月の収支をまとめて、独立資金の進捗レポートを作成してください。</div>
+      </div>
+      <div class="inst-log-item">
+        <div class="inst-log-meta"><span style="color:var(--accent)">Trainer Agent</span><span>2026-04-02 07:00</span><span style="color:var(--green)">✓ 完了</span></div>
+        <div class="inst-log-text">今週のトレーニングメニューを体重72kg・筋肥大目的で最適化してください。</div>
+      </div>
+    </div>
   </div>
 
   <!-- TAB: FINANCE -->
@@ -1580,6 +2264,32 @@ function loadAll() {
   if (sid.compliance) document.getElementById('compliance-note').value = sid.compliance;
   renderSideTasks();
   updateSideProgress();
+
+  // Work
+  if (data.workNotes) document.getElementById('work-notes').value = data.workNotes;
+  renderWorkTodos();
+
+  // Study notes
+  if (data.studyNotes) document.getElementById('study-notes').value = data.studyNotes;
+
+  // Hair notes
+  if (data.style?.hairNotes) document.getElementById('hair-notes').value = data.style.hairNotes;
+
+  // Ideas
+  renderIdeas();
+
+  // Instruction log
+  renderInstructionLog();
+
+  // Schedule calendar
+  renderCalendar();
+
+  // Gym
+  renderExercises();
+
+  // Meals
+  renderMeals();
+  drawPFCChart();
 }
 
 // ─── MODE ─────────────────────────────────────────────────────────────────
@@ -2007,16 +2717,456 @@ function drawWeightChart() {
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────
-const TAB_ORDER = ['today','health','goals','weekly','finance','shopping','style','side'];
+const TAB_ORDER = ['today','schedule','gym','meal','health','study','work','goals','weekly','finance','shopping','style','side','news','ideas','aiagent'];
 
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-  document.getElementById(`tab-${name}`).classList.add('active');
+  const tabEl = document.getElementById(`tab-${name}`);
+  if (!tabEl) return;
+  tabEl.classList.add('active');
   const idx = TAB_ORDER.indexOf(name);
-  document.querySelectorAll('.tab')[idx].classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  if (tabs[idx]) tabs[idx].classList.add('active');
   if (name === 'weekly') renderWeeklyGrid();
   if (name === 'health') drawWeightChart();
+  if (name === 'meal') drawPFCChart();
+  if (name === 'schedule') renderCalendar();
+  if (name === 'gym') renderExercises();
+  if (name === 'work') renderWorkTodos();
+}
+
+// ─── SCHEDULE ─────────────────────────────────────────────────────────────
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function prevMonth() { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function nextMonth() { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+function renderCalendar() {
+  const label = document.getElementById('cal-month-label');
+  if (!label) return;
+  label.textContent = `${calYear}年${calMonth+1}月`;
+  const grid = document.getElementById('cal-grid');
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const days = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+  let html = '';
+  for (let i=0; i<first; i++) html += '<div class="cal-cell other-month"></div>';
+  for (let d=1; d<=days; d++) {
+    const isToday = d===today.getDate() && calMonth===today.getMonth() && calYear===today.getFullYear();
+    html += `<div class="cal-cell${isToday?' today':''}">${d}</div>`;
+  }
+  grid.innerHTML = html;
+  renderScheduleEvents();
+}
+
+function renderScheduleEvents() {
+  const data = loadData();
+  const events = (data.scheduleEvents || []).filter(e => e.date === todayKey()).sort((a,b)=>a.time.localeCompare(b.time));
+  const container = document.getElementById('schedule-events');
+  if (!container) return;
+  const colors = {'var(--accent)':'仕事','var(--green)':'健康','var(--yellow)':'個人','var(--red)':'重要'};
+  container.innerHTML = events.length ? events.map((e,i) => `
+    <div class="schedule-event">
+      <div class="event-time">${e.time}</div>
+      <div class="event-dot" style="background:${e.color}"></div>
+      <div class="event-text">${e.text}</div>
+      <div class="event-del" onclick="deleteEvent(${i})">×</div>
+    </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:12px 0">予定なし</div>';
+}
+
+function addEvent() {
+  const time = document.getElementById('event-time').value || '09:00';
+  const text = document.getElementById('event-text').value.trim();
+  const color = document.getElementById('event-color').value;
+  if (!text) return;
+  const data = loadData();
+  if (!data.scheduleEvents) data.scheduleEvents = [];
+  data.scheduleEvents.push({ date: todayKey(), time, text, color });
+  saveData(data);
+  document.getElementById('event-text').value = '';
+  renderScheduleEvents();
+}
+
+function deleteEvent(idx) {
+  const data = loadData();
+  if (!data.scheduleEvents) return;
+  data.scheduleEvents.splice(idx, 1);
+  saveData(data);
+  renderScheduleEvents();
+}
+
+// ─── WORKOUT ──────────────────────────────────────────────────────────────
+function toggleTrainingDay(i) {
+  const btn = document.getElementById(`wd-${i}`);
+  btn.classList.toggle('active');
+  btn.classList.toggle('rest');
+  const data = loadData();
+  if (!data.gym) data.gym = {};
+  if (!data.gym.trainingDays) data.gym.trainingDays = [true,false,true,false,true,false,false];
+  data.gym.trainingDays[i] = btn.classList.contains('active');
+  saveData(data);
+}
+
+function addExercise(name, tag) {
+  const data = loadData();
+  const today = todayKey();
+  if (!data.gym) data.gym = {};
+  if (!data.gym.menus) data.gym.menus = {};
+  if (!data.gym.menus[today]) data.gym.menus[today] = [];
+  data.gym.menus[today].push({ id: Date.now(), name: name||'新種目', tag: tag||'全身', sets: [{w:60,r:10,done:false},{w:60,r:10,done:false},{w:60,r:10,done:false}] });
+  saveData(data);
+  renderExercises();
+}
+
+function renderExercises() {
+  const data = loadData();
+  const today = todayKey();
+  const exercises = data.gym?.menus?.[today] || [];
+  const container = document.getElementById('exercise-list');
+  if (!container) return;
+  if (!exercises.length) { container.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0;text-align:center">下のボタンで種目を追加してください</div>'; return; }
+  container.innerHTML = exercises.map((ex, ei) => `
+    <div class="ex-card">
+      <div class="ex-header">
+        <input class="ex-name" value="${ex.name}" oninput="updateExName(${ei},this.value)" />
+        <span class="ex-tag">${ex.tag}</span>
+        <span class="ex-del" onclick="deleteExercise(${ei})">×</span>
+      </div>
+      <table class="set-table">
+        <tr><th>SET</th><th>重量 kg</th><th>回数</th><th>完了</th></tr>
+        ${ex.sets.map((s,si) => `
+        <tr>
+          <td><div class="set-num">${si+1}</div></td>
+          <td><div class="num-ctrl">
+            <button class="num-btn" onclick="adjSet(${ei},${si},'w',-2.5)">−</button>
+            <input class="num-val" type="number" value="${s.w}" oninput="setVal(${ei},${si},'w',this.value)" />
+            <button class="num-btn" onclick="adjSet(${ei},${si},'w',2.5)">+</button>
+          </div></td>
+          <td><div class="num-ctrl">
+            <button class="num-btn" onclick="adjSet(${ei},${si},'r',-1)">−</button>
+            <input class="num-val" type="number" value="${s.r}" oninput="setVal(${ei},${si},'r',this.value)" />
+            <button class="num-btn" onclick="adjSet(${ei},${si},'r',1)">+</button>
+          </div></td>
+          <td><div class="set-done-chk${s.done?' done':''}" onclick="toggleSetDone(${ei},${si})"></div></td>
+        </tr>`).join('')}
+      </table>
+      <div class="ex-footer">
+        <button class="add-set-btn" onclick="addSet(${ei})">+ セット追加</button>
+      </div>
+    </div>`).join('');
+}
+
+function adjSet(ei, si, key, delta) {
+  const data = loadData(); const today = todayKey();
+  const s = data.gym.menus[today][ei].sets[si];
+  s[key] = Math.max(0, parseFloat((s[key]+delta).toFixed(1)));
+  saveData(data); renderExercises();
+}
+
+function setVal(ei, si, key, val) {
+  const data = loadData(); const today = todayKey();
+  data.gym.menus[today][ei].sets[si][key] = parseFloat(val)||0;
+  saveData(data);
+}
+
+function toggleSetDone(ei, si) {
+  const data = loadData(); const today = todayKey();
+  const s = data.gym.menus[today][ei].sets[si];
+  s.done = !s.done; saveData(data); renderExercises();
+}
+
+function addSet(ei) {
+  const data = loadData(); const today = todayKey();
+  const sets = data.gym.menus[today][ei].sets;
+  const last = sets[sets.length-1];
+  sets.push({w:last.w, r:last.r, done:false});
+  saveData(data); renderExercises();
+}
+
+function deleteExercise(ei) {
+  const data = loadData(); const today = todayKey();
+  data.gym.menus[today].splice(ei,1);
+  saveData(data); renderExercises();
+}
+
+function updateExName(ei, val) {
+  const data = loadData(); const today = todayKey();
+  data.gym.menus[today][ei].name = val;
+  saveData(data);
+}
+
+// ─── PFC CHART ────────────────────────────────────────────────────────────
+function updatePFC() {
+  const p = parseFloat(document.getElementById('pfc-p').value)||0;
+  const f = parseFloat(document.getElementById('pfc-f').value)||0;
+  const c = parseFloat(document.getElementById('pfc-c').value)||0;
+  const total = p*4 + f*9 + c*4;
+  document.getElementById('pfc-total-kcal').textContent = Math.round(total);
+  document.getElementById('pfc-p-val').textContent = p+'g';
+  document.getElementById('pfc-f-val').textContent = f+'g';
+  document.getElementById('pfc-c-val').textContent = c+'g';
+  const tg = p*4+f*9+c*4||1;
+  document.getElementById('pfc-p-pct').textContent = Math.round(p*4/tg*100)+'%';
+  document.getElementById('pfc-f-pct').textContent = Math.round(f*9/tg*100)+'%';
+  document.getElementById('pfc-c-pct').textContent = Math.round(c*4/tg*100)+'%';
+  const data = loadData(); const today = todayKey();
+  if (!data[today]) data[today]={};
+  data[today].pfc = {p,f,c};
+  saveData(data);
+  drawPFCChart();
+}
+
+function drawPFCChart() {
+  const canvas = document.getElementById('pfc-canvas');
+  if (!canvas) return;
+  const data = loadData(); const today = todayKey();
+  const pfc = data[today]?.pfc || {};
+  const p = pfc.p||0, f = pfc.f||0, c = pfc.c||0;
+  document.getElementById('pfc-p')?.value !== undefined && (document.getElementById('pfc-p').value = p||'');
+  document.getElementById('pfc-f')?.value !== undefined && (document.getElementById('pfc-f').value = f||'');
+  document.getElementById('pfc-c')?.value !== undefined && (document.getElementById('pfc-c').value = c||'');
+  const total = p*4+f*9+c*4;
+  document.getElementById('pfc-total-kcal').textContent = Math.round(total)||0;
+  document.getElementById('pfc-p-val').textContent = p+'g';
+  document.getElementById('pfc-f-val').textContent = f+'g';
+  document.getElementById('pfc-c-val').textContent = c+'g';
+  const tg = total||1;
+  document.getElementById('pfc-p-pct').textContent = Math.round(p*4/tg*100)+'%';
+  document.getElementById('pfc-f-pct').textContent = Math.round(f*9/tg*100)+'%';
+  document.getElementById('pfc-c-pct').textContent = Math.round(c*4/tg*100)+'%';
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  canvas.width = 140*dpr; canvas.height = 140*dpr;
+  ctx.scale(dpr,dpr);
+  const cx=70, cy=70, r=52, lw=20;
+  ctx.clearRect(0,0,140,140);
+  if (!total) {
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle='rgba(42,42,50,.8)'; ctx.lineWidth=lw; ctx.stroke(); return;
+  }
+  const segs = [{val:p*4,color:'#3b82f6'},{val:f*9,color:'#f59e0b'},{val:c*4,color:'#10b981'}];
+  let start = -Math.PI/2;
+  segs.forEach(seg => {
+    const angle = (seg.val/total)*Math.PI*2;
+    if (angle <= 0) return;
+    ctx.beginPath(); ctx.arc(cx,cy,r,start,start+angle);
+    ctx.strokeStyle=seg.color; ctx.lineWidth=lw; ctx.lineCap='butt'; ctx.stroke();
+    start+=angle;
+  });
+}
+
+// ─── MEAL ─────────────────────────────────────────────────────────────────
+const MEAL_TYPES = ['breakfast','lunch','snack','dinner','protein'];
+
+function addMealItem(type) {
+  const name = document.getElementById(`meal-name-${type}`).value.trim();
+  const kcal = parseFloat(document.getElementById(`meal-kcal-in-${type}`).value)||0;
+  if (!name) return;
+  const data = loadData(); const today = todayKey();
+  if (!data[today]) data[today]={};
+  if (!data[today].meals) data[today].meals={};
+  if (!data[today].meals[type]) data[today].meals[type]=[];
+  data[today].meals[type].push({id:Date.now(),name,kcal});
+  saveData(data);
+  document.getElementById(`meal-name-${type}`).value='';
+  document.getElementById(`meal-kcal-in-${type}`).value='';
+  renderMeals();
+}
+
+function deleteMealItem(type, id) {
+  const data = loadData(); const today = todayKey();
+  if (data[today]?.meals?.[type]) data[today].meals[type]=data[today].meals[type].filter(i=>i.id!==id);
+  saveData(data); renderMeals();
+}
+
+function renderMeals() {
+  const data = loadData(); const today = todayKey();
+  MEAL_TYPES.forEach(type => {
+    const items = data[today]?.meals?.[type]||[];
+    const total = items.reduce((s,i)=>s+i.kcal,0);
+    const lbl = document.getElementById(`meal-kcal-${type}`);
+    if (lbl) lbl.textContent = total ? `${total} kcal` : '0 kcal';
+    const container = document.getElementById(`meal-items-${type}`);
+    if (!container) return;
+    container.innerHTML = items.map(item=>`
+      <div class="meal-item-row">
+        <div class="meal-item-name">${item.name}</div>
+        <div class="meal-item-kcal">${item.kcal||'—'}</div>
+        <div class="meal-item-del" onclick="deleteMealItem('${type}',${item.id})">×</div>
+      </div>`).join('');
+  });
+}
+
+function toggleMealSection(type) {
+  const body = document.getElementById(`meal-body-${type}`);
+  if (body) body.style.display = body.style.display==='none' ? '' : 'none';
+}
+
+// ─── WORK ─────────────────────────────────────────────────────────────────
+function addWorkTodo() {
+  const text = document.getElementById('work-todo-input').value.trim();
+  const priority = document.getElementById('work-priority').value;
+  if (!text) return;
+  const data = loadData();
+  if (!data.workTodos) data.workTodos=[];
+  data.workTodos.push({id:Date.now(),text,priority,done:false});
+  saveData(data);
+  document.getElementById('work-todo-input').value='';
+  renderWorkTodos();
+}
+
+function toggleWorkTodo(id) {
+  const data = loadData();
+  const t = (data.workTodos||[]).find(t=>t.id===id);
+  if (t) t.done=!t.done;
+  saveData(data); renderWorkTodos();
+}
+
+function deleteWorkTodo(id) {
+  const data = loadData();
+  data.workTodos=(data.workTodos||[]).filter(t=>t.id!==id);
+  saveData(data); renderWorkTodos();
+}
+
+function renderWorkTodos() {
+  const data = loadData();
+  const todos = data.workTodos||[];
+  const container = document.getElementById('work-todo-list');
+  if (!container) return;
+  const dotClass = {high:'dot-high',mid:'dot-mid',low:'dot-low'};
+  container.innerHTML = todos.map(t=>`
+    <div class="work-todo${t.done?' done-item':''}">
+      <div class="work-todo-check${t.done?' done':''}" onclick="toggleWorkTodo(${t.id})"></div>
+      <div class="work-priority-dot ${dotClass[t.priority]||'dot-mid'}"></div>
+      <div class="work-todo-text">${t.text}</div>
+      <div class="work-todo-del" onclick="deleteWorkTodo(${t.id})">×</div>
+    </div>`).join('');
+}
+
+function saveWorkNotes() {
+  const data = loadData();
+  data.workNotes = document.getElementById('work-notes').value;
+  saveData(data);
+}
+
+function updateWorkload() {
+  const val = document.getElementById('workload-range').value;
+  document.getElementById('workload-bar').style.width = val+'%';
+  const label = val<40 ? '余裕あり' : val<70 ? '通常' : val<90 ? '繁忙' : 'ピーク';
+  const color = val<40 ? 'var(--green)' : val<70 ? 'var(--blue)' : val<90 ? 'var(--yellow)' : 'var(--red)';
+  document.getElementById('workload-label').textContent = `${label} (${val}%)`;
+  document.getElementById('workload-label').style.color = color;
+}
+
+function saveStudyNotes() {
+  const data = loadData();
+  data.studyNotes = document.getElementById('study-notes').value;
+  saveData(data);
+}
+
+function saveHairNotes() {
+  const data = loadData();
+  if (!data.style) data.style={};
+  data.style.hairNotes = document.getElementById('hair-notes').value;
+  saveData(data);
+}
+
+function toggleRoutine(el) {
+  el.classList.toggle('done');
+}
+
+// ─── NEWS ─────────────────────────────────────────────────────────────────
+function filterNews(cat) {
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.news-card').forEach(card=>{
+    card.style.display = (cat==='all'||card.dataset.cat===cat) ? '' : 'none';
+  });
+}
+
+// ─── IDEAS ────────────────────────────────────────────────────────────────
+const IDEA_COLORS = {biz:'background:var(--blue-dim);color:var(--blue)',side:'background:rgba(168,85,247,.15);color:#a855f7',invest:'background:var(--yellow-dim);color:var(--yellow)',life:'background:var(--green-dim);color:var(--green)',other:'background:var(--card2);color:var(--text3);border:1px solid var(--border)'};
+const IDEA_LABELS = {biz:'💼 ビジネス',side:'🚀 副業',invest:'💰 投資',life:'🌱 ライフ',other:'💡 その他'};
+
+function addIdea() {
+  const text = document.getElementById('idea-input').value.trim();
+  const cat = document.getElementById('idea-cat-select').value;
+  if (!text) return;
+  const data = loadData();
+  if (!data.ideas) data.ideas=[];
+  data.ideas.unshift({id:Date.now(),text,cat,star:false,date:todayKey()});
+  saveData(data);
+  document.getElementById('idea-input').value='';
+  renderIdeas();
+}
+
+function toggleIdeaStar(id) {
+  const data = loadData();
+  const idea = (data.ideas||[]).find(i=>i.id===id);
+  if (idea) idea.star=!idea.star;
+  saveData(data); renderIdeas();
+}
+
+function deleteIdea(id) {
+  const data = loadData();
+  data.ideas=(data.ideas||[]).filter(i=>i.id!==id);
+  saveData(data); renderIdeas();
+}
+
+function renderIdeas() {
+  const data = loadData();
+  const ideas = data.ideas||[];
+  const container = document.getElementById('ideas-list');
+  if (!container) return;
+  if (!ideas.length) return;
+  container.innerHTML = ideas.map(idea=>`
+    <div class="idea-card">
+      <div class="idea-header">
+        <span class="idea-cat-tag" style="${IDEA_COLORS[idea.cat]||IDEA_COLORS.other}">${IDEA_LABELS[idea.cat]||'💡 その他'}</span>
+        <span class="idea-del" onclick="deleteIdea(${idea.id})">×</span>
+        <span class="idea-star" onclick="toggleIdeaStar(${idea.id})">${idea.star?'⭐':'☆'}</span>
+      </div>
+      <div style="font-size:14px;color:var(--text);line-height:1.6">${idea.text}</div>
+      <div class="idea-date">${idea.date}</div>
+    </div>`).join('');
+}
+
+// ─── AI INSTRUCTIONS ──────────────────────────────────────────────────────
+function selectAgent(el, name) {
+  document.querySelectorAll('.agent-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('selected-agent-name').textContent = name+' Agent';
+}
+
+function setFreq(el, freq) {
+  el.parentElement.querySelectorAll('.btn-ghost').forEach(b=>b.style.borderColor='');
+  el.style.borderColor='var(--accent)';
+}
+
+function sendInstruction() {
+  const text = document.getElementById('ai-instruction').value.trim();
+  if (!text) return;
+  const agent = document.getElementById('selected-agent-name').textContent;
+  const data = loadData();
+  if (!data.instructionLog) data.instructionLog=[];
+  data.instructionLog.unshift({agent,text,date:new Date().toLocaleString('ja'),status:'送信済み'});
+  saveData(data);
+  document.getElementById('ai-instruction').value='';
+  renderInstructionLog();
+}
+
+function renderInstructionLog() {
+  const data = loadData();
+  const logs = data.instructionLog||[];
+  const container = document.getElementById('instruction-log');
+  if (!container||!logs.length) return;
+  container.innerHTML = logs.map(l=>`
+    <div class="inst-log-item">
+      <div class="inst-log-meta"><span style="color:var(--accent)">${l.agent}</span><span>${l.date}</span><span style="color:var(--yellow)">${l.status}</span></div>
+      <div class="inst-log-text">${l.text}</div>
+    </div>`).join('');
 }
 
 // ─── FINANCE DETAIL ───────────────────────────────────────────────────────
