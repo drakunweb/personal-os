@@ -1195,7 +1195,7 @@
     <div class="tab" onclick="switchTab('ideas')">💡 アイデア</div>
     <div class="tab" onclick="switchTab('weekly')">📊 週次</div>
     <div class="tab" onclick="switchTab('news')">📰 ニュース</div>
-    <div class="tab" onclick="switchTab('aiagent')">🤖 AI</div>
+    <div class="tab" onclick="switchTab('aiagent')">🤖 AI指示</div>
   </div>
 
   <!-- TAB: TODAY (SUMMARY) -->
@@ -1684,9 +1684,17 @@
     </div>
   </div>
 
-  <!-- TAB: MEAL (食事) -->
+  <!-- TAB: MEAL (食事) — 表示のみ、Sheetsから自動同期 -->
   <div class="tab-content" id="tab-meal">
-    <div class="section-title">今日のPFCバランス <span class="human-badge">✏️ 手入力</span></div>
+
+    <!-- sync source notice -->
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-bottom:4px">
+      <span style="font-size:16px">📊</span>
+      <span style="font-size:12px;color:var(--text2)">Google Sheetsと同期 — 記録はスプレッドシートで行ってください</span>
+    </div>
+
+    <!-- PFC サマリー（表示のみ） -->
+    <div class="section-title" style="margin-top:16px">今日のPFCバランス <span class="ai-label-badge">📊 Sheets同期</span></div>
     <div class="card">
       <div class="pfc-wrap">
         <div class="pfc-ring-wrap">
@@ -1723,88 +1731,30 @@
           </div>
         </div>
       </div>
-      <div class="pfc-input-row">
-        <div class="pfc-in-label" style="color:var(--blue)">P</div>
-        <input class="pfc-in" type="number" id="pfc-p" placeholder="0" oninput="updatePFC()" />
-        <div class="pfc-unit">g</div>
-      </div>
-      <div class="pfc-input-row">
-        <div class="pfc-in-label" style="color:var(--yellow)">F</div>
-        <input class="pfc-in" type="number" id="pfc-f" placeholder="0" oninput="updatePFC()" />
-        <div class="pfc-unit">g</div>
-      </div>
-      <div class="pfc-input-row">
-        <div class="pfc-in-label" style="color:var(--green)">C</div>
-        <input class="pfc-in" type="number" id="pfc-c" placeholder="0" oninput="updatePFC()" />
-        <div class="pfc-unit">g</div>
+      <!-- hidden inputs for JS compatibility -->
+      <input type="hidden" id="pfc-p" />
+      <input type="hidden" id="pfc-f" />
+      <input type="hidden" id="pfc-c" />
+    </div>
+
+    <!-- 食事ログ（表示のみ） -->
+    <div class="section-title">食事ログ <span class="ai-label-badge">📊 Sheets同期</span></div>
+    <div id="meal-log-view">
+      <div style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0">
+        Sheetsから同期するとここに表示されます
       </div>
     </div>
-    <div class="section-title">食事ログ <span class="human-badge">✏️ 手入力</span></div>
-    <div class="meal-section">
-      <div class="meal-header" onclick="toggleMealSection('breakfast')">
-        <div class="meal-title">🌅 朝食</div>
-        <div class="meal-kcal" id="meal-kcal-breakfast">0 kcal</div>
-      </div>
-      <div class="meal-body" id="meal-body-breakfast"><div id="meal-items-breakfast"></div>
-        <div class="add-row" style="margin-top:6px">
-          <input class="add-input" id="meal-name-breakfast" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('breakfast')" />
-          <input class="add-input" type="number" id="meal-kcal-in-breakfast" placeholder="kcal" style="width:80px" />
-          <button class="add-btn" onclick="addMealItem('breakfast')">+</button>
-        </div>
-      </div>
+
+    <!-- hidden kcal elements for JS compatibility -->
+    <div style="display:none">
+      <div id="meal-kcal-breakfast"></div><div id="meal-items-breakfast"></div>
+      <div id="meal-kcal-lunch"></div><div id="meal-items-lunch"></div>
+      <div id="meal-kcal-snack"></div><div id="meal-items-snack"></div>
+      <div id="meal-kcal-dinner"></div><div id="meal-items-dinner"></div>
+      <div id="meal-kcal-protein"></div><div id="meal-items-protein"></div>
     </div>
-    <div class="meal-section">
-      <div class="meal-header" onclick="toggleMealSection('lunch')">
-        <div class="meal-title">☀️ 昼食</div>
-        <div class="meal-kcal" id="meal-kcal-lunch">0 kcal</div>
-      </div>
-      <div class="meal-body" id="meal-body-lunch"><div id="meal-items-lunch"></div>
-        <div class="add-row" style="margin-top:6px">
-          <input class="add-input" id="meal-name-lunch" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('lunch')" />
-          <input class="add-input" type="number" id="meal-kcal-in-lunch" placeholder="kcal" style="width:80px" />
-          <button class="add-btn" onclick="addMealItem('lunch')">+</button>
-        </div>
-      </div>
-    </div>
-    <div class="meal-section">
-      <div class="meal-header" onclick="toggleMealSection('snack')">
-        <div class="meal-title">🍫 おやつ</div>
-        <div class="meal-kcal" id="meal-kcal-snack">0 kcal</div>
-      </div>
-      <div class="meal-body" id="meal-body-snack"><div id="meal-items-snack"></div>
-        <div class="add-row" style="margin-top:6px">
-          <input class="add-input" id="meal-name-snack" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('snack')" />
-          <input class="add-input" type="number" id="meal-kcal-in-snack" placeholder="kcal" style="width:80px" />
-          <button class="add-btn" onclick="addMealItem('snack')">+</button>
-        </div>
-      </div>
-    </div>
-    <div class="meal-section">
-      <div class="meal-header" onclick="toggleMealSection('dinner')">
-        <div class="meal-title">🌙 夕食</div>
-        <div class="meal-kcal" id="meal-kcal-dinner">0 kcal</div>
-      </div>
-      <div class="meal-body" id="meal-body-dinner"><div id="meal-items-dinner"></div>
-        <div class="add-row" style="margin-top:6px">
-          <input class="add-input" id="meal-name-dinner" placeholder="食品名" onkeydown="if(event.key==='Enter')addMealItem('dinner')" />
-          <input class="add-input" type="number" id="meal-kcal-in-dinner" placeholder="kcal" style="width:80px" />
-          <button class="add-btn" onclick="addMealItem('dinner')">+</button>
-        </div>
-      </div>
-    </div>
-    <div class="meal-section">
-      <div class="meal-header" onclick="toggleMealSection('protein')">
-        <div class="meal-title">💪 プロテイン・サプリ</div>
-        <div class="meal-kcal" id="meal-kcal-protein">0 kcal</div>
-      </div>
-      <div class="meal-body" id="meal-body-protein"><div id="meal-items-protein"></div>
-        <div class="add-row" style="margin-top:6px">
-          <input class="add-input" id="meal-name-protein" placeholder="プロテイン名" onkeydown="if(event.key==='Enter')addMealItem('protein')" />
-          <input class="add-input" type="number" id="meal-kcal-in-protein" placeholder="kcal" style="width:80px" />
-          <button class="add-btn" onclick="addMealItem('protein')">+</button>
-        </div>
-      </div>
-    </div>
+
+    <!-- AI分析 -->
     <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
     <div class="ai-card">
       <div class="ai-badge">🤖 Nutrition Agent</div>
@@ -3096,7 +3046,7 @@ function drawWeightChart() {
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────
-const TAB_ORDER = ['today','schedule','gym','meal','health','study','work','goals','weekly','finance','shopping','style','side','news','ideas','aiagent'];
+const TAB_ORDER = ['today','schedule','health','gym','meal','study','work','goals','finance','side','shopping','style','ideas','weekly','news','aiagent'];
 
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -3340,48 +3290,71 @@ function drawPFCChart() {
 // ─── MEAL ─────────────────────────────────────────────────────────────────
 const MEAL_TYPES = ['breakfast','lunch','snack','dinner','protein'];
 
-function addMealItem(type) {
-  const name = document.getElementById(`meal-name-${type}`).value.trim();
-  const kcal = parseFloat(document.getElementById(`meal-kcal-in-${type}`).value)||0;
-  if (!name) return;
-  const data = loadData(); const today = todayKey();
-  if (!data[today]) data[today]={};
-  if (!data[today].meals) data[today].meals={};
-  if (!data[today].meals[type]) data[today].meals[type]=[];
-  data[today].meals[type].push({id:Date.now(),name,kcal});
-  saveData(data);
-  document.getElementById(`meal-name-${type}`).value='';
-  document.getElementById(`meal-kcal-in-${type}`).value='';
-  renderMeals();
-}
-
-function deleteMealItem(type, id) {
-  const data = loadData(); const today = todayKey();
-  if (data[today]?.meals?.[type]) data[today].meals[type]=data[today].meals[type].filter(i=>i.id!==id);
-  saveData(data); renderMeals();
-}
-
+// 食事タブは表示専用 — Sheetsから同期したデータを renderMeals() で描画
 function renderMeals() {
   const data = loadData(); const today = todayKey();
-  MEAL_TYPES.forEach(type => {
-    const items = data[today]?.meals?.[type]||[];
-    const total = items.reduce((s,i)=>s+i.kcal,0);
-    const lbl = document.getElementById(`meal-kcal-${type}`);
-    if (lbl) lbl.textContent = total ? `${total} kcal` : '0 kcal';
-    const container = document.getElementById(`meal-items-${type}`);
-    if (!container) return;
-    container.innerHTML = items.map(item=>`
-      <div class="meal-item-row">
-        <div class="meal-item-name">${item.name}</div>
-        <div class="meal-item-kcal">${item.kcal||'—'}</div>
-        <div class="meal-item-del" onclick="deleteMealItem('${type}',${item.id})">×</div>
-      </div>`).join('');
-  });
-}
+  const container = document.getElementById('meal-log-view');
 
-function toggleMealSection(type) {
-  const body = document.getElementById(`meal-body-${type}`);
-  if (body) body.style.display = body.style.display==='none' ? '' : 'none';
+  // foodSummary（Sheets同期済み）があればPFCに反映
+  const summary = data[today]?.foodSummary;
+  if (summary) {
+    document.getElementById('pfc-p').value = summary.protein || 0;
+    document.getElementById('pfc-f').value = summary.fat || 0;
+    document.getElementById('pfc-c').value = summary.carbon || 0;
+    drawPFCChart();
+    updatePFCStrip();
+  }
+
+  if (!container) return;
+
+  // meals（カテゴリ別）を表示
+  const meals = data[today]?.meals || {};
+  const LABELS = { '朝食':'🌅 朝食','昼食':'☀️ 昼食','間食':'🍫 間食','夕食':'🌙 夕食','プロテイン':'💪 プロテイン' };
+  const cats = Object.keys(meals).filter(k => meals[k]?.length > 0);
+
+  if (!cats.length && !summary) {
+    container.innerHTML = '<div style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0">Sheetsから同期するとここに表示されます</div>';
+    return;
+  }
+
+  let html = '';
+  // summary行
+  if (summary) {
+    html += `<div class="card" style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;color:var(--text2)">合計</span>
+        <span style="font-size:20px;font-weight:700;color:var(--yellow)">${summary.calorie || 0} kcal</span>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:6px;font-size:12px">
+        <span style="color:var(--blue)">P: ${summary.protein || 0}g</span>
+        <span style="color:var(--yellow)">F: ${summary.fat || 0}g</span>
+        <span style="color:var(--green)">C: ${summary.carbon || 0}g</span>
+      </div>
+    </div>`;
+  }
+
+  cats.forEach(cat => {
+    const items = meals[cat];
+    const totalKcal = items.reduce((s, i) => s + (i.kcal || 0), 0);
+    const label = LABELS[cat] || cat;
+    html += `<div class="meal-section">
+      <div class="meal-header" style="cursor:default">
+        <div class="meal-title">${label}</div>
+        <div class="meal-kcal">${totalKcal} kcal</div>
+      </div>
+      <div>${items.map(item => `
+        <div class="meal-item-row">
+          <div class="meal-item-name">${item.name}</div>
+          <div style="display:flex;gap:8px;font-size:11px;color:var(--text3);flex-shrink:0">
+            ${item.protein ? `P:${item.protein}g` : ''}
+            ${item.fat ? `F:${item.fat}g` : ''}
+            ${item.kcal ? `<span style="color:var(--yellow)">${item.kcal}kcal</span>` : ''}
+          </div>
+        </div>`).join('')}</div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
 }
 
 // ─── WORK ─────────────────────────────────────────────────────────────────
