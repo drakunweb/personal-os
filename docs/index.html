@@ -877,6 +877,63 @@
     .site-metric { background: var(--card2); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
     .site-metric-val { font-size: 18px; font-weight: 700; }
     .site-metric-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+    /* ─── SUMMARY (今日タブ) ─── */
+    .greeting-card {
+      background: linear-gradient(135deg, rgba(124,58,237,.18) 0%, rgba(59,130,246,.10) 100%);
+      border: 1px solid rgba(124,58,237,.3);
+      border-radius: var(--radius); padding: 20px 16px; margin-bottom: 4px;
+    }
+    .greeting-text { font-size: 20px; font-weight: 800; letter-spacing: -.5px; }
+    .greeting-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .summary-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px; cursor: pointer;
+      transition: border-color .2s;
+    }
+    .summary-card:active { border-color: var(--accent); }
+    .summary-card-icon { font-size: 20px; margin-bottom: 6px; }
+    .summary-card-title { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+    .summary-card-val { font-size: 22px; font-weight: 800; letter-spacing: -.5px; line-height: 1.1; }
+    .summary-card-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+    .summary-card-bar { height: 3px; background: var(--card2); border-radius: 99px; margin-top: 8px; overflow: hidden; }
+    .summary-card-bar-fill { height: 100%; border-radius: 99px; }
+    .habit-row-compact { display: flex; gap: 6px; flex-wrap: wrap; }
+    .habit-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--card2); border: 1.5px solid var(--border);
+      border-radius: 99px; padding: 6px 12px; cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--text2);
+      transition: all .15s; -webkit-user-select: none;
+    }
+    .habit-chip.done { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+    .habit-chip-icon { font-size: 15px; }
+    .schedule-preview { display: flex; flex-direction: column; gap: 6px; }
+    .schedule-preview-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+    .schedule-preview-time { color: var(--text3); font-weight: 600; min-width: 44px; font-size: 12px; }
+    .schedule-preview-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .schedule-preview-text { color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ─── MOBILE FIXES ─── */
+    .set-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .num-btn { min-width: 32px; min-height: 32px; }
+
+    @media (max-width: 480px) {
+      .pfc-wrap { flex-direction: column; align-items: center; gap: 16px; }
+      .pfc-legend { width: 100%; }
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+      .cia-detail { grid-template-columns: 1fr 1fr 1fr; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .site-metrics { grid-template-columns: repeat(3,1fr); }
+      .fin-row { flex-wrap: wrap; gap: 4px; }
+      .add-row { flex-wrap: wrap; }
+      .add-row .add-input { min-width: 0; }
+      .modal { padding: 20px 16px calc(16px + env(safe-area-inset-bottom,0)); }
+      .agent-select { gap: 6px; }
+      .agent-btn { font-size: 11px; padding: 7px 10px; }
+      .stat-strip { grid-template-columns: repeat(2,1fr); }
+    }
   </style>
 </head>
 <body>
@@ -968,11 +1025,61 @@
     <div class="tab" onclick="switchTab('aiagent')">🤖 AI指示</div>
   </div>
 
-  <!-- TAB: TODAY -->
+  <!-- TAB: TODAY (SUMMARY) -->
   <div class="tab-content active" id="tab-today">
 
+    <!-- Greeting -->
+    <div class="greeting-card">
+      <div class="greeting-text" id="greeting-text">おはようございます 👋</div>
+      <div class="greeting-sub" id="greeting-sub">今日も5つの資本を前進させましょう</div>
+    </div>
+
+    <!-- Quick stats -->
+    <div class="summary-grid" style="margin-top:10px">
+      <div class="summary-card" onclick="switchTab('health')">
+        <div class="summary-card-icon">⚖️</div>
+        <div class="summary-card-title">体重</div>
+        <div class="summary-card-val" id="sum-weight" style="color:var(--blue)">— kg</div>
+        <div class="summary-card-sub" id="sum-weight-sub">目標: 68.0 kg</div>
+        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-weight-bar" style="background:var(--blue);width:0%"></div></div>
+      </div>
+      <div class="summary-card" onclick="switchTab('health')">
+        <div class="summary-card-icon">😴</div>
+        <div class="summary-card-title">昨夜の睡眠</div>
+        <div class="summary-card-val" id="sum-sleep" style="color:var(--accent)">— h</div>
+        <div class="summary-card-sub" id="sum-sleep-sub">目標: 7時間</div>
+        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-sleep-bar" style="background:var(--accent);width:0%"></div></div>
+      </div>
+      <div class="summary-card" onclick="switchTab('study')">
+        <div class="summary-card-icon">📚</div>
+        <div class="summary-card-title">CIA進捗</div>
+        <div class="summary-card-val" id="sum-cia" style="color:var(--accent)">0%</div>
+        <div class="summary-card-sub">Part 1〜3</div>
+        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-cia-bar" style="background:var(--accent);width:0%"></div></div>
+      </div>
+      <div class="summary-card" onclick="switchTab('finance')">
+        <div class="summary-card-icon">💴</div>
+        <div class="summary-card-title">今月の手残り</div>
+        <div class="summary-card-val" id="sum-finance" style="color:var(--green);font-size:16px">— 円</div>
+        <div class="summary-card-sub" id="sum-finance-sub">収支計算中</div>
+        <div class="summary-card-bar"><div class="summary-card-bar-fill" id="sum-finance-bar" style="background:var(--green);width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Habits compact -->
+    <div class="section-title">今日の習慣</div>
+    <div class="habit-row-compact">
+      <div class="habit-chip" id="chip-gym" onclick="toggleHabit('gym')"><span class="habit-chip-icon">🏋️</span>筋トレ</div>
+      <div class="habit-chip" id="chip-meal" onclick="toggleHabit('meal')"><span class="habit-chip-icon">🥗</span>食事</div>
+      <div class="habit-chip" id="chip-sleep" onclick="toggleHabit('sleep')"><span class="habit-chip-icon">😴</span>睡眠</div>
+      <div class="habit-chip" id="chip-mouth" onclick="toggleHabit('mouth')"><span class="habit-chip-icon">🦷</span>矯正</div>
+      <div class="habit-chip" id="chip-cia" onclick="toggleHabit('cia')"><span class="habit-chip-icon">📚</span>勉強</div>
+      <div class="habit-chip" id="chip-water" onclick="toggleHabit('water')"><span class="habit-chip-icon">💧</span>水</div>
+    </div>
+
+    <!-- Priorities -->
     <div class="section-title">今日の3優先事項</div>
-    <div class="priority-list" id="priority-list">
+    <div class="priority-list">
       <div class="priority-item" id="pri-0">
         <div class="priority-num">1</div>
         <input class="priority-input" placeholder="今日の最重要タスク..." id="pri-text-0" oninput="savePriority(0)" />
@@ -990,42 +1097,44 @@
       </div>
     </div>
 
-    <div class="section-title">今日の習慣チェック</div>
-    <div class="habit-grid">
-      <div class="habit-card" id="habit-gym" onclick="toggleHabit('gym')">
-        <div class="habit-icon">🏋️</div>
-        <div class="habit-name">ジム・筋トレ</div>
-        <div class="habit-badge" id="badge-gym">未完了</div>
+    <!-- Section row: Schedule + Work -->
+    <div class="grid grid-2" style="margin-top:4px">
+      <div class="card" onclick="switchTab('schedule')" style="cursor:pointer">
+        <div class="card-label">📅 今日の予定</div>
+        <div class="schedule-preview" id="sum-schedule" style="margin-top:8px">
+          <div style="font-size:12px;color:var(--text3)">予定を追加してください</div>
+        </div>
       </div>
-      <div class="habit-card" id="habit-meal" onclick="toggleHabit('meal')">
-        <div class="habit-icon">🥗</div>
-        <div class="habit-name">食事管理</div>
-        <div class="habit-badge" id="badge-meal">未完了</div>
-      </div>
-      <div class="habit-card" id="habit-sleep" onclick="toggleHabit('sleep')">
-        <div class="habit-icon">😴</div>
-        <div class="habit-name">7h睡眠</div>
-        <div class="habit-badge" id="badge-sleep">未完了</div>
-      </div>
-      <div class="habit-card" id="habit-mouth" onclick="toggleHabit('mouth')">
-        <div class="habit-icon">🦷</div>
-        <div class="habit-name">マウスピース</div>
-        <div class="habit-badge" id="badge-mouth">未完了</div>
-      </div>
-      <div class="habit-card" id="habit-cia" onclick="toggleHabit('cia')">
-        <div class="habit-icon">📚</div>
-        <div class="habit-name">CIA学習</div>
-        <div class="habit-badge" id="badge-cia">未完了</div>
-      </div>
-      <div class="habit-card" id="habit-water" onclick="toggleHabit('water')">
-        <div class="habit-icon">💧</div>
-        <div class="habit-name">水2L</div>
-        <div class="habit-badge" id="badge-water">未完了</div>
+      <div class="card" onclick="switchTab('work')" style="cursor:pointer">
+        <div class="card-label">💼 仕事 TOP</div>
+        <div id="sum-work-todos" style="margin-top:8px">
+          <div style="font-size:12px;color:var(--text3)">TODOを追加してください</div>
+        </div>
       </div>
     </div>
 
+    <!-- Section row: Meal + Gym -->
+    <div class="grid grid-2" style="margin-top:10px">
+      <div class="card" onclick="switchTab('meal')" style="cursor:pointer">
+        <div class="card-label">🍽️ 今日の食事</div>
+        <div class="summary-card-val" id="sum-meal-kcal" style="color:var(--yellow);font-size:20px;margin-top:6px">0 kcal</div>
+        <div style="display:flex;gap:8px;margin-top:6px;font-size:11px;color:var(--text3)">
+          <span>P: <span id="sum-p">0</span>g</span>
+          <span>F: <span id="sum-f">0</span>g</span>
+          <span>C: <span id="sum-c">0</span>g</span>
+        </div>
+      </div>
+      <div class="card" onclick="switchTab('gym')" style="cursor:pointer">
+        <div class="card-label">🏋️ 今日の筋トレ</div>
+        <div id="sum-gym" style="margin-top:6px;font-size:13px;color:var(--text2)">
+          <div style="font-size:12px;color:var(--text3)">メニューを追加してください</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick note -->
     <div class="section-title">今日のメモ</div>
-    <textarea class="notes-area" id="daily-notes" placeholder="気づき・学び・決定事項・懸念点..." rows="5" oninput="saveNotes()"></textarea>
+    <textarea class="notes-area" id="daily-notes" placeholder="気づき・学び・決定事項・懸念点..." rows="4" oninput="saveNotes()"></textarea>
 
   </div>
 
@@ -2290,6 +2399,9 @@ function loadAll() {
   // Meals
   renderMeals();
   drawPFCChart();
+
+  // Summary
+  updateSummary();
 }
 
 // ─── MODE ─────────────────────────────────────────────────────────────────
@@ -2834,7 +2946,7 @@ function renderExercises() {
         <span class="ex-tag">${ex.tag}</span>
         <span class="ex-del" onclick="deleteExercise(${ei})">×</span>
       </div>
-      <table class="set-table">
+      <div class="set-table-wrap"><table class="set-table">
         <tr><th>SET</th><th>重量 kg</th><th>回数</th><th>完了</th></tr>
         ${ex.sets.map((s,si) => `
         <tr>
@@ -2851,7 +2963,7 @@ function renderExercises() {
           </div></td>
           <td><div class="set-done-chk${s.done?' done':''}" onclick="toggleSetDone(${ei},${si})"></div></td>
         </tr>`).join('')}
-      </table>
+      </table></div>
       <div class="ex-footer">
         <button class="add-set-btn" onclick="addSet(${ei})">+ セット追加</button>
       </div>
@@ -3365,6 +3477,136 @@ function saveComplianceNote() {
 
 // ─── RESIZE ───────────────────────────────────────────────────────────────
 window.addEventListener('resize', drawWeightChart);
+
+// ─── SUMMARY PAGE ─────────────────────────────────────────────────────────
+function updateSummary() {
+  const data = loadData();
+  const today = todayKey();
+  const td = data[today] || {};
+  const h = new Date().getHours();
+
+  // Greeting
+  const greet = h < 11 ? 'おはようございます ☀️' : h < 17 ? 'こんにちは 👋' : 'お疲れ様です 🌙';
+  const mode = data.ecoMode ? '省エネモード中 — 最小行動だけでOK。' : '今日も5つの資本を前進させましょう。';
+  const g = document.getElementById('greeting-text');
+  const gs = document.getElementById('greeting-sub');
+  if (g) g.textContent = greet;
+  if (gs) gs.textContent = mode;
+
+  // Weight summary
+  const w = td.metrics?.weight;
+  const wg = data.weightGoal || { start: 72, goal: 68 };
+  const sumW = document.getElementById('sum-weight');
+  const sumWB = document.getElementById('sum-weight-bar');
+  const sumWSub = document.getElementById('sum-weight-sub');
+  if (sumW) sumW.textContent = w ? w.toFixed(1) + ' kg' : '— kg';
+  if (sumWSub && w) sumWSub.textContent = `目標まであと ${Math.max(0, w - wg.goal).toFixed(1)} kg`;
+  if (sumWB && w) {
+    const pct = Math.min(100, Math.max(0, ((wg.start - w) / (wg.start - wg.goal)) * 100));
+    sumWB.style.width = pct + '%';
+  }
+
+  // Sleep summary
+  const sl = td.metrics?.sleep;
+  const sumSl = document.getElementById('sum-sleep');
+  const sumSlB = document.getElementById('sum-sleep-bar');
+  const sumSlSub = document.getElementById('sum-sleep-sub');
+  if (sumSl) sumSl.textContent = sl ? sl.toFixed(1) + ' h' : '— h';
+  if (sumSlSub && sl) sumSlSub.textContent = sl >= 7 ? '✓ 目標達成！' : sl >= 6 ? '⚠ もう少し' : '⚡ 省エネ推奨';
+  if (sumSlB && sl) sumSlB.style.width = Math.min(100, (sl / 8) * 100) + '%';
+
+  // CIA summary
+  const cia = data.cia || {};
+  const passed = [1,2,3].filter(n => cia[`p${n}`]).length;
+  const ciaPct = Math.round((passed / 3) * 100);
+  const sumCia = document.getElementById('sum-cia');
+  const sumCiaB = document.getElementById('sum-cia-bar');
+  if (sumCia) sumCia.textContent = ciaPct + '%';
+  if (sumCiaB) sumCiaB.style.width = ciaPct + '%';
+
+  // Finance summary
+  const fd = data.financeDetail || {};
+  const income = fd.income || 0;
+  const variable = fd.variable || 0;
+  const remaining = income - 260000 - variable;
+  const sumFin = document.getElementById('sum-finance');
+  const sumFinSub = document.getElementById('sum-finance-sub');
+  const sumFinB = document.getElementById('sum-finance-bar');
+  if (sumFin) sumFin.textContent = income ? remaining.toLocaleString() + ' 円' : '— 円';
+  if (sumFinSub && income) sumFinSub.textContent = `収入 ${income.toLocaleString()}円 から`;
+  if (sumFinB && income) sumFinB.style.width = Math.min(100, Math.max(0, (remaining / income) * 100)) + '%';
+
+  // Habits chips
+  const habits = td.habits || {};
+  ['gym','meal','sleep','mouth','cia','water'].forEach(hb => {
+    const chip = document.getElementById(`chip-${hb}`);
+    if (chip) chip.classList.toggle('done', !!habits[hb]);
+  });
+
+  // Schedule preview
+  const events = (data.scheduleEvents || [])
+    .filter(e => e.date === today)
+    .sort((a,b) => a.time.localeCompare(b.time))
+    .slice(0, 3);
+  const sumSched = document.getElementById('sum-schedule');
+  if (sumSched) {
+    sumSched.innerHTML = events.length
+      ? events.map(e => `
+        <div class="schedule-preview-item">
+          <div class="schedule-preview-time">${e.time}</div>
+          <div class="schedule-preview-dot" style="background:${e.color}"></div>
+          <div class="schedule-preview-text">${e.text}</div>
+        </div>`).join('')
+      : '<div style="font-size:12px;color:var(--text3)">予定なし — タップして追加</div>';
+  }
+
+  // Work todos preview
+  const todos = (data.workTodos || []).filter(t => !t.done).slice(0, 3);
+  const sumWork = document.getElementById('sum-work-todos');
+  if (sumWork) {
+    const dotClass = { high:'dot-high', mid:'dot-mid', low:'dot-low' };
+    sumWork.innerHTML = todos.length
+      ? todos.map(t => `
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:var(--text2)">
+          <div class="work-priority-dot ${dotClass[t.priority]||'dot-mid'}"></div>
+          <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.text}</div>
+        </div>`).join('')
+      : '<div style="font-size:12px;color:var(--text3)">TODOなし — タップして追加</div>';
+  }
+
+  // Meal summary
+  const meals = td.meals || {};
+  const allItems = Object.values(meals).flat();
+  const totalKcal = allItems.reduce((s,i) => s+(i.kcal||0), 0);
+  const sumMeal = document.getElementById('sum-meal-kcal');
+  if (sumMeal) sumMeal.textContent = totalKcal ? totalKcal + ' kcal' : '0 kcal';
+  const pfc = td.pfc || {};
+  const sp = document.getElementById('sum-p'); if(sp) sp.textContent = pfc.p||0;
+  const sf = document.getElementById('sum-f'); if(sf) sf.textContent = pfc.f||0;
+  const sc = document.getElementById('sum-c'); if(sc) sc.textContent = pfc.c||0;
+
+  // Gym summary
+  const exercises = data.gym?.menus?.[today] || [];
+  const sumGym = document.getElementById('sum-gym');
+  if (sumGym) {
+    sumGym.innerHTML = exercises.length
+      ? exercises.slice(0,3).map(ex => {
+          const done = ex.sets.filter(s=>s.done).length;
+          return `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:13px">
+            <span style="color:var(--text2)">${ex.name}</span>
+            <span style="color:${done===ex.sets.length?'var(--green)':'var(--text3)'}">${done}/${ex.sets.length}set</span>
+          </div>`;
+        }).join('') + (exercises.length > 3 ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">他 ${exercises.length-3}種目</div>` : '')
+      : '<div style="font-size:12px;color:var(--text3)">メニューなし — タップして追加</div>';
+  }
+}
+
+// ─── HABIT TOGGLE WITH CHIP SYNC ──────────────────────────────────────────
+const _origToggleHabit = toggleHabit;
+function toggleHabit(habit) {
+  _origToggleHabit(habit);
+  updateSummary();
+}
 </script>
 </body>
 </html>
