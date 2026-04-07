@@ -1120,6 +1120,102 @@
     .schedule-preview-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .schedule-preview-text { color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+    /* ─── DAY TIMELINE ─── */
+    .day-timeline-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      overflow-y: auto;
+      max-height: 420px;
+    }
+    .timeline-inner {
+      position: relative;
+      padding-left: 44px;
+    }
+    .tl-hour {
+      position: relative;
+      height: 52px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .tl-hour:first-child { border-top: none; }
+    .tl-hour-label {
+      position: absolute;
+      left: -42px;
+      top: -8px;
+      width: 38px;
+      text-align: right;
+      font-size: 10px;
+      color: var(--text3);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .tl-half {
+      position: absolute;
+      top: 26px;
+      left: 0; right: 0;
+      border-top: 1px dashed rgba(255,255,255,0.03);
+    }
+    .tl-event {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 1;
+      transition: opacity 0.15s;
+      box-sizing: border-box;
+    }
+    .tl-event:active { opacity: 0.75; }
+    .tl-event-time { font-size: 10px; opacity: 0.75; line-height: 1.2; font-weight: 600; }
+    .tl-event-name { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+    .tl-event-link { font-size: 10px; opacity: 0.7; }
+    .tl-now-wrap {
+      position: absolute;
+      left: 0; right: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .tl-now-line {
+      height: 2px;
+      background: var(--red);
+      position: relative;
+    }
+    .tl-now-dot {
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+    /* ─── TASK BOARD ─── */
+    .task-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .task-board-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 4px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .task-board-item:active { transform: scale(0.94); background: var(--card2); }
+    .task-board-icon { font-size: 22px; }
+    .task-board-label { font-size: 10px; font-weight: 700; color: var(--text3); }
+    .task-board-badge { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; margin-top: 1px; }
+
     /* ─── MOBILE FIXES ─── */
     .set-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .num-btn { min-width: 32px; min-height: 32px; }
@@ -1296,39 +1392,66 @@
       </div>
     </div>
 
-    <!-- Section row: Schedule + Work -->
-    <div class="grid grid-2" style="margin-top:4px">
-      <div class="card" onclick="switchTab('schedule')" style="cursor:pointer">
-        <div class="card-label">📅 今日の予定</div>
-        <div class="schedule-preview" id="sum-schedule" style="margin-top:8px">
-          <div style="font-size:12px;color:var(--text3)">予定を追加してください</div>
-        </div>
-      </div>
-      <div class="card" onclick="switchTab('work')" style="cursor:pointer">
-        <div class="card-label">💼 仕事 TOP</div>
-        <div id="sum-work-todos" style="margin-top:8px">
-          <div style="font-size:12px;color:var(--text3)">TODOを追加してください</div>
-        </div>
+    <!-- Day Timeline -->
+    <div class="section-title" style="margin-top:4px">📅 今日のスケジュール <span class="human-badge">✏️ 予定タブで追加</span></div>
+    <div class="day-timeline-wrap" id="day-timeline-wrap">
+      <div class="timeline-inner" id="day-timeline-inner">
+        <div style="text-align:center;padding:20px 0;font-size:12px;color:var(--text3)">予定を追加するとここに表示されます</div>
       </div>
     </div>
 
-    <!-- Section row: Meal + Gym -->
-    <div class="grid grid-2" style="margin-top:10px">
-      <div class="card" onclick="switchTab('meal')" style="cursor:pointer">
-        <div class="card-label">🍽️ 今日の食事</div>
-        <div class="summary-card-val" id="sum-meal-kcal" style="color:var(--yellow);font-size:20px;margin-top:6px">0 kcal</div>
-        <div style="display:flex;gap:8px;margin-top:6px;font-size:11px;color:var(--text3)">
-          <span>P: <span id="sum-p">0</span>g</span>
-          <span>F: <span id="sum-f">0</span>g</span>
-          <span>C: <span id="sum-c">0</span>g</span>
-        </div>
+    <!-- Task Board -->
+    <div class="section-title" style="margin-top:14px">🚦 タスクボード</div>
+    <div class="task-board" id="task-board">
+      <div class="task-board-item" onclick="switchTab('work')">
+        <div class="task-board-icon">💼</div>
+        <div class="task-board-label">仕事</div>
+        <div class="task-board-badge" style="background:rgba(124,58,237,0.15);color:var(--accent)" id="tb-work-count">—</div>
       </div>
-      <div class="card" onclick="switchTab('gym')" style="cursor:pointer">
-        <div class="card-label">🏋️ 今日の筋トレ</div>
-        <div id="sum-gym" style="margin-top:6px;font-size:13px;color:var(--text2)">
-          <div style="font-size:12px;color:var(--text3)">メニューを追加してください</div>
-        </div>
+      <div class="task-board-item" onclick="switchTab('study')">
+        <div class="task-board-icon">📚</div>
+        <div class="task-board-label">勉強</div>
+        <div class="task-board-badge" style="background:rgba(59,130,246,0.15);color:var(--blue)" id="tb-cia-hours">—</div>
       </div>
+      <div class="task-board-item" onclick="switchTab('gym')">
+        <div class="task-board-icon">🏋️</div>
+        <div class="task-board-label">筋トレ</div>
+        <div class="task-board-badge" style="background:rgba(16,185,129,0.15);color:var(--green)" id="tb-gym-status">—</div>
+      </div>
+      <div class="task-board-item" onclick="switchTab('meal')">
+        <div class="task-board-icon">🍽️</div>
+        <div class="task-board-label">食事</div>
+        <div class="task-board-badge" style="background:rgba(245,158,11,0.15);color:var(--yellow)" id="tb-meal-kcal">—</div>
+      </div>
+      <div class="task-board-item" onclick="switchTab('finance')">
+        <div class="task-board-icon">💴</div>
+        <div class="task-board-label">財務</div>
+        <div class="task-board-badge" style="background:rgba(16,185,129,0.15);color:var(--green)" id="tb-finance">—</div>
+      </div>
+      <div class="task-board-item" onclick="switchTab('goals')">
+        <div class="task-board-icon">🎯</div>
+        <div class="task-board-label">目標</div>
+        <div class="task-board-badge" style="background:rgba(124,58,237,0.1);color:var(--accent)" id="tb-cia-pct">—</div>
+      </div>
+      <div class="task-board-item" onclick="switchTab('side')">
+        <div class="task-board-icon">🚀</div>
+        <div class="task-board-label">副業</div>
+        <div class="task-board-badge" style="background:rgba(245,158,11,0.1);color:var(--yellow)" id="tb-side">—</div>
+      </div>
+      <div class="task-board-item" onclick="switchTab('health')">
+        <div class="task-board-icon">💪</div>
+        <div class="task-board-label">記録</div>
+        <div class="task-board-badge" style="background:rgba(239,68,68,0.1);color:var(--red)" id="tb-weight">—</div>
+      </div>
+    </div>
+
+    <!-- hidden sum elements still needed by JS -->
+    <div style="display:none">
+      <div class="schedule-preview" id="sum-schedule"></div>
+      <div id="sum-work-todos"></div>
+      <div id="sum-meal-kcal"></div>
+      <div id="sum-p"></div><div id="sum-f"></div><div id="sum-c"></div>
+      <div id="sum-gym"></div>
     </div>
 
     <!-- Quick note -->
@@ -1689,14 +1812,26 @@
     </div>
     <div class="section-title">今日の予定 <span class="human-badge">✏️ 手入力</span></div>
     <div id="schedule-events"></div>
-    <div class="add-row">
+    <div class="add-row" style="flex-wrap:wrap;gap:6px">
       <input class="add-input" id="event-time" type="time" style="width:100px;flex:none" />
-      <input class="add-input" id="event-text" placeholder="予定を入力..." onkeydown="if(event.key==='Enter')addEvent()" />
-      <select id="event-color" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none">
+      <input class="add-input" id="event-text" placeholder="予定を入力..." style="flex:1;min-width:120px" onkeydown="if(event.key==='Enter')addEvent()" />
+      <input class="add-input" id="event-duration" type="number" placeholder="60" min="5" step="5" style="width:70px;flex:none" title="所要時間（分）" />
+      <select id="event-color" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none;flex:none">
         <option value="var(--accent)">仕事</option>
         <option value="var(--green)">健康</option>
         <option value="var(--yellow)">個人</option>
         <option value="var(--red)">重要</option>
+      </select>
+      <select id="event-tab" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none;flex:none">
+        <option value="">リンクなし</option>
+        <option value="work">💼 仕事</option>
+        <option value="study">📚 勉強</option>
+        <option value="gym">🏋️ 筋トレ</option>
+        <option value="meal">🍽️ 食事</option>
+        <option value="health">💪 記録</option>
+        <option value="finance">💴 財務</option>
+        <option value="goals">🎯 目標</option>
+        <option value="side">🚀 副業</option>
       </select>
       <button class="add-btn" onclick="addEvent()">+</button>
     </div>
@@ -2521,6 +2656,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderWeeklyGrid();
   updateStats();
   drawWeightChart();
+  renderDayTimeline();
+  updateTaskBoard();
 });
 
 function setHeaderDate() {
@@ -2880,6 +3017,8 @@ function startClock() {
     const el = document.getElementById('today-clock');
     if (el) el.textContent = `${hh}:${mm}`;
     updateNextEvent();
+    renderDayTimeline();
+    updateTaskBoard();
   }
   tick();
   setInterval(tick, 30000);
@@ -3212,9 +3351,9 @@ function renderScheduleEvents() {
   const colors = {'var(--accent)':'仕事','var(--green)':'健康','var(--yellow)':'個人','var(--red)':'重要'};
   container.innerHTML = events.length ? events.map((e,i) => `
     <div class="schedule-event">
-      <div class="event-time">${e.time}</div>
+      <div class="event-time">${e.time}${e.duration ? ` · ${e.duration}分` : ''}</div>
       <div class="event-dot" style="background:${e.color}"></div>
-      <div class="event-text">${e.text}</div>
+      <div class="event-text">${e.text}${e.tab ? ` <span style="font-size:10px;opacity:0.6">→ ${e.tab}</span>` : ''}</div>
       <div class="event-del" onclick="deleteEvent(${i})">×</div>
     </div>`).join('') : '<div style="color:var(--text3);font-size:13px;padding:12px 0">予定なし</div>';
 }
@@ -3223,13 +3362,17 @@ function addEvent() {
   const time = document.getElementById('event-time').value || '09:00';
   const text = document.getElementById('event-text').value.trim();
   const color = document.getElementById('event-color').value;
+  const duration = parseInt(document.getElementById('event-duration')?.value) || 60;
+  const tab = document.getElementById('event-tab')?.value || '';
   if (!text) return;
   const data = loadData();
   if (!data.scheduleEvents) data.scheduleEvents = [];
-  data.scheduleEvents.push({ date: todayKey(), time, text, color });
+  data.scheduleEvents.push({ date: todayKey(), time, text, color, duration, tab });
   saveData(data);
   document.getElementById('event-text').value = '';
+  if (document.getElementById('event-duration')) document.getElementById('event-duration').value = '';
   renderScheduleEvents();
+  renderDayTimeline();
 }
 
 function deleteEvent(idx) {
@@ -3238,6 +3381,7 @@ function deleteEvent(idx) {
   data.scheduleEvents.splice(idx, 1);
   saveData(data);
   renderScheduleEvents();
+  renderDayTimeline();
 }
 
 // ─── WORKOUT ──────────────────────────────────────────────────────────────
@@ -3422,6 +3566,126 @@ function drawPFCChart() {
   if (document.getElementById('pfc-c-goal-lbl')) document.getElementById('pfc-c-goal-lbl').textContent = tgt.c;
   if (document.getElementById('pfc-c-pct')) document.getElementById('pfc-c-pct').textContent = cPct + '%';
   if (document.getElementById('pfc-c-bar-fill')) document.getElementById('pfc-c-bar-fill').style.width = cPct + '%';
+}
+
+// ─── DAY TIMELINE ─────────────────────────────────────────────────────────
+const TL_START = 6;   // 06:00
+const TL_END   = 23;  // 23:00
+const TL_HOUR_H = 52; // px per hour
+
+function renderDayTimeline() {
+  const inner = document.getElementById('day-timeline-inner');
+  if (!inner) return;
+  const data = loadData();
+  const today = todayKey();
+  const events = (data.scheduleEvents || [])
+    .filter(e => e.date === today)
+    .sort((a, b) => a.time.localeCompare(b.time));
+
+  const now = new Date();
+  const nowH = now.getHours() + now.getMinutes() / 60;
+
+  // Build hour rows
+  let hoursHtml = '';
+  for (let h = TL_START; h <= TL_END; h++) {
+    const label = `${h}:00`;
+    hoursHtml += `<div class="tl-hour"><span class="tl-hour-label">${label}</span><div class="tl-half"></div></div>`;
+  }
+
+  // Build event blocks
+  let eventsHtml = '';
+  events.forEach(e => {
+    const [eh, em] = (e.time || '09:00').split(':').map(Number);
+    const startFrac = eh + em / 60;
+    if (startFrac > TL_END) return;
+    const clampedStart = Math.max(startFrac, TL_START);
+    const top = (clampedStart - TL_START) * TL_HOUR_H;
+    const dur = Math.max(15, e.duration || 60); // minimum 15 min displayed
+    const height = Math.max(28, (dur / 60) * TL_HOUR_H - 2);
+    const bg = e.color || 'var(--accent)';
+    const clickAttr = e.tab ? `onclick="switchTab('${e.tab}')"` : '';
+    const linkLabel = e.tab ? `<div class="tl-event-link">→ ${e.tab}</div>` : '';
+    const minStr = em.toString().padStart(2, '0');
+    eventsHtml += `
+      <div class="tl-event" style="top:${top}px;height:${height}px;background:${bg}18;border-left:3px solid ${bg}" ${clickAttr}>
+        <div class="tl-event-time" style="color:${bg}">${eh}:${minStr}${e.duration ? ` · ${e.duration}分` : ''}</div>
+        <div class="tl-event-name">${e.text}</div>
+        ${linkLabel}
+      </div>`;
+  });
+
+  // Current time line
+  let nowHtml = '';
+  if (nowH >= TL_START && nowH <= TL_END) {
+    const nowTop = (nowH - TL_START) * TL_HOUR_H;
+    nowHtml = `<div class="tl-now-wrap" style="top:${nowTop}px"><div class="tl-now-line"><div class="tl-now-dot"></div></div></div>`;
+  }
+
+  inner.innerHTML = hoursHtml + eventsHtml + nowHtml;
+
+  // Auto-scroll to current time (center view)
+  const wrap = document.getElementById('day-timeline-wrap');
+  if (wrap && nowH >= TL_START && nowH <= TL_END) {
+    const nowTop = (nowH - TL_START) * TL_HOUR_H;
+    wrap.scrollTop = Math.max(0, nowTop - wrap.clientHeight / 2 + TL_HOUR_H);
+  }
+}
+
+// ─── TASK BOARD ───────────────────────────────────────────────────────────
+function updateTaskBoard() {
+  const data = loadData();
+  const today = todayKey();
+  const td = data[today] || {};
+
+  // 仕事 TODO件数
+  const workUndone = (data.workTodos || []).filter(t => !t.done).length;
+  const tbWork = document.getElementById('tb-work-count');
+  if (tbWork) tbWork.textContent = workUndone ? `${workUndone}件` : '完了';
+
+  // 勉強 CIA時間
+  const ciaHours = data.cia?.hours || 0;
+  const tbCia = document.getElementById('tb-cia-hours');
+  if (tbCia) tbCia.textContent = `${ciaHours}h`;
+
+  // 筋トレ 今日のステータス
+  const gymToday = (data.gym?.menus?.[today] || []).length;
+  const gymHabit = !!(td.habits?.gym);
+  const tbGym = document.getElementById('tb-gym-status');
+  if (tbGym) tbGym.textContent = gymHabit ? '✓ 完了' : gymToday ? `${gymToday}種目` : '未記録';
+
+  // 食事 kcal
+  const kcal = td.foodSummary?.calorie || (td.pfc ? Math.round((td.pfc.p||0)*4+(td.pfc.f||0)*9+(td.pfc.c||0)*4) : 0);
+  const tbMeal = document.getElementById('tb-meal-kcal');
+  if (tbMeal) tbMeal.textContent = kcal ? `${kcal}kcal` : '未記録';
+
+  // 財務
+  const tbFin = document.getElementById('tb-finance');
+  if (tbFin) {
+    const assets = data.assets || {};
+    const total = (assets.invest || 0) + (assets.cash || 0);
+    tbFin.textContent = total ? `¥${Math.round(total/10000)}万` : '確認';
+  }
+
+  // CIA進捗
+  const tbCiaPct = document.getElementById('tb-cia-pct');
+  if (tbCiaPct) {
+    const pct = data.cia ? Math.round((data.cia.hours / (data.cia.target_hours || 300)) * 100) : 0;
+    tbCiaPct.textContent = `${pct}%`;
+  }
+
+  // 副業
+  const tbSide = document.getElementById('tb-side');
+  if (tbSide) {
+    const sideIncome = data.side?.income || 0;
+    tbSide.textContent = sideIncome ? `¥${Math.round(sideIncome/10000)}万` : '記録';
+  }
+
+  // 体重
+  const tbWeight = document.getElementById('tb-weight');
+  if (tbWeight) {
+    const w = td.metrics?.weight;
+    tbWeight.textContent = w ? `${w}kg` : '未記録';
+  }
 }
 
 // ─── MEAL ─────────────────────────────────────────────────────────────────
@@ -3988,6 +4252,7 @@ function updateSummary() {
         }).join('') + (exercises.length > 3 ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">他 ${exercises.length-3}種目</div>` : '')
       : '<div style="font-size:12px;color:var(--text3)">メニューなし — タップして追加</div>';
   }
+  updateTaskBoard();
 }
 
 // ─── HABIT TOGGLE WITH CHIP SYNC ──────────────────────────────────────────
