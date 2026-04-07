@@ -1154,6 +1154,23 @@
       position: relative;
       padding-left: 44px;
     }
+    .tl-grid-layer {
+      position: relative;
+    }
+    .tl-overlay-layer {
+      position: absolute;
+      top: 0;
+      left: 44px;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+    }
+    .tl-overlay-layer .tl-event {
+      pointer-events: all;
+    }
+    .tl-overlay-layer .tl-now-wrap {
+      pointer-events: none;
+    }
     .tl-hour {
       position: relative;
       height: 52px;
@@ -1179,8 +1196,8 @@
     }
     .tl-event {
       position: absolute;
-      left: 4px;
-      right: 4px;
+      left: 2px;
+      right: 2px;
       border-radius: 6px;
       padding: 4px 8px;
       overflow: hidden;
@@ -1195,7 +1212,7 @@
     .tl-event-link { font-size: 10px; opacity: 0.7; }
     .tl-now-wrap {
       position: absolute;
-      left: 0; right: 0;
+      left: -44px; right: 0;
       z-index: 3;
       pointer-events: none;
     }
@@ -2393,6 +2410,23 @@
   <!-- TAB: SHOPPING -->
   <div class="tab-content" id="tab-shopping">
 
+    <!-- 生活TODO -->
+    <div class="section-title">🏠 生活Todo <span class="human-badge">✏️ タップで完了</span></div>
+    <div id="life-todo-list"></div>
+    <div class="add-row">
+      <select id="life-todo-cat" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:10px 8px;font-family:inherit;outline:none;font-size:13px;flex:none">
+        <option value="clean">🧹 掃除</option>
+        <option value="laundry">👕 洗濯</option>
+        <option value="cook">🍳 料理</option>
+        <option value="admin">📋 手続き</option>
+        <option value="other">📌 その他</option>
+      </select>
+      <input class="add-input" id="life-todo-input" placeholder="タスク（例: 洗濯機まわす）" style="flex:1" onkeydown="if(event.key==='Enter')addLifeTodo()" />
+      <button class="add-btn" onclick="addLifeTodo()">+</button>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:20px 0"></div>
+
     <div class="section-title">買うべきもの <span class="human-badge">✏️ 手入力</span></div>
     <div id="must-list"></div>
     <div class="add-row">
@@ -2757,6 +2791,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderNewsList();
   renderSideBoard();
   loadCareerTab();
+  renderLifeTodos();
 });
 
 function setHeaderDate() {
@@ -3715,14 +3750,18 @@ function renderDayTimeline() {
     const dur = Math.max(15, e.duration || 60); // minimum 15 min displayed
     const height = Math.max(28, (dur / 60) * TL_HOUR_H - 2);
     const bg = e.color || 'var(--accent)';
-    const clickAttr = e.tab ? `onclick="switchTab('${e.tab}')"` : '';
-    const linkLabel = e.tab ? `<div class="tl-event-link">→ ${e.tab}</div>` : '';
+    // detect @tag in title (e.g. "@work", "@gym") — override e.tab
+    const TAG_MAP = {work:'work',gym:'gym',study:'study',meal:'meal',health:'health',goals:'goals',finance:'finance',side:'side',career:'career',shopping:'shopping',schedule:'schedule'};
+    const tagMatch = (e.text || '').match(/@(\w+)/);
+    const resolvedTab = e.tab || (tagMatch && TAG_MAP[tagMatch[1].toLowerCase()]) || '';
+    const displayText = (e.text || '').replace(/@\w+/g, '').trim();
+    const clickAttr = resolvedTab ? `onclick="switchTab('${resolvedTab}')" style="top:${top}px;height:${height}px;background:${bg}18;border-left:3px solid ${bg};cursor:pointer"` : `style="top:${top}px;height:${height}px;background:${bg}18;border-left:3px solid ${bg}"`;
+    const tagBadge = tagMatch ? `<span style="font-size:9px;opacity:0.7;background:rgba(255,255,255,0.1);border-radius:3px;padding:1px 4px;margin-left:4px">@${tagMatch[1]}</span>` : '';
     const minStr = em.toString().padStart(2, '0');
     eventsHtml += `
-      <div class="tl-event" style="top:${top}px;height:${height}px;background:${bg}18;border-left:3px solid ${bg}" ${clickAttr}>
+      <div class="tl-event" ${clickAttr}>
         <div class="tl-event-time" style="color:${bg}">${eh}:${minStr}${e.duration ? ` · ${e.duration}分` : ''}</div>
-        <div class="tl-event-name">${e.text}</div>
-        ${linkLabel}
+        <div class="tl-event-name">${displayText || e.text}${tagBadge}</div>
       </div>`;
   });
 
@@ -3733,7 +3772,8 @@ function renderDayTimeline() {
     nowHtml = `<div class="tl-now-wrap" style="top:${nowTop}px"><div class="tl-now-line"><div class="tl-now-dot"></div></div></div>`;
   }
 
-  inner.innerHTML = hoursHtml + eventsHtml + nowHtml;
+  const totalH = (TL_END - TL_START + 1) * TL_HOUR_H;
+  inner.innerHTML = `<div class="tl-grid-layer">${hoursHtml}</div><div class="tl-overlay-layer" style="height:${totalH}px">${eventsHtml}${nowHtml}</div>`;
 
   // Auto-scroll to current time (center view)
   const wrap = document.getElementById('day-timeline-wrap');
@@ -4050,6 +4090,66 @@ function deleteNewsItem(id) {
   data.newsItems = data.newsItems.filter(n => n.id !== id);
   saveData(data);
   renderNewsList();
+}
+
+// ─── LIFE TODO ────────────────────────────────────────────────────────────
+const LIFE_CAT = {
+  clean:   { label:'🧹 掃除',  color:'var(--blue)' },
+  laundry: { label:'👕 洗濯',  color:'var(--accent)' },
+  cook:    { label:'🍳 料理',  color:'var(--yellow)' },
+  admin:   { label:'📋 手続き', color:'var(--green)' },
+  other:   { label:'📌 その他', color:'var(--text3)' },
+};
+
+function renderLifeTodos() {
+  const container = document.getElementById('life-todo-list');
+  if (!container) return;
+  const data = loadData();
+  const todos = (data.lifeTodos || []);
+  if (!todos.length) {
+    container.innerHTML = '<div style="text-align:center;padding:12px 0;font-size:13px;color:var(--text3)">タスクを追加してください</div>';
+    return;
+  }
+  const undone = todos.filter(t => !t.done);
+  const done   = todos.filter(t =>  t.done);
+  const renderItem = t => {
+    const c = LIFE_CAT[t.cat] || LIFE_CAT.other;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border)">
+      <div onclick="toggleLifeTodo(${t.id})" style="width:18px;height:18px;border-radius:4px;border:2px solid ${t.done ? 'var(--green)' : 'var(--border2)'};background:${t.done ? 'var(--green)' : 'none'};cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff">${t.done ? '✓' : ''}</div>
+      <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,0.06);color:${c.color};flex-shrink:0">${c.label}</span>
+      <span style="flex:1;font-size:13px;color:${t.done ? 'var(--text3)' : 'var(--text)'};text-decoration:${t.done ? 'line-through' : 'none'}">${t.text}</span>
+      <span onclick="deleteLifeTodo(${t.id})" style="cursor:pointer;color:var(--text3);font-size:16px;flex-shrink:0">×</span>
+    </div>`;
+  };
+  container.innerHTML = undone.map(renderItem).join('') +
+    (done.length ? `<div style="font-size:11px;color:var(--text3);padding:6px 4px 2px">完了済み</div>` + done.map(renderItem).join('') : '');
+}
+
+function addLifeTodo() {
+  const text = document.getElementById('life-todo-input')?.value.trim();
+  if (!text) return;
+  const cat  = document.getElementById('life-todo-cat')?.value || 'other';
+  const data = loadData();
+  if (!data.lifeTodos) data.lifeTodos = [];
+  data.lifeTodos.push({ id: Date.now(), text, cat, done: false, date: todayKey() });
+  saveData(data);
+  document.getElementById('life-todo-input').value = '';
+  renderLifeTodos();
+}
+
+function toggleLifeTodo(id) {
+  const data = loadData();
+  const t = (data.lifeTodos || []).find(t => t.id === id);
+  if (t) t.done = !t.done;
+  saveData(data);
+  renderLifeTodos();
+}
+
+function deleteLifeTodo(id) {
+  const data = loadData();
+  data.lifeTodos = (data.lifeTodos || []).filter(t => t.id !== id);
+  saveData(data);
+  renderLifeTodos();
 }
 
 // ─── CAREER ───────────────────────────────────────────────────────────────
