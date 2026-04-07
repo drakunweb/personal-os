@@ -783,7 +783,7 @@
     /* ─── PFC CHART ─── */
     .pfc-wrap { display:flex; align-items:center; gap:24px; padding:8px 0; }
     .pfc-ring-wrap { position:relative; flex-shrink:0; width:140px; height:140px; }
-    .pfc-ring-wrap canvas { position:absolute; inset:0; }
+    .pfc-ring-wrap canvas { position:absolute; inset:0; width:100% !important; height:100% !important; }
     .pfc-center { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
     .pfc-kcal { font-size:26px; font-weight:800; letter-spacing:-1px; }
     .pfc-kcal-label { font-size:11px; color:var(--text3); margin-top:-2px; }
@@ -1216,14 +1216,14 @@
     </div>
 
     <!-- Habits compact -->
-    <div class="section-title">今日の習慣 <span class="human-badge">✏️ タップして記録</span></div>
+    <div class="section-title">今日の習慣 <span class="human-badge">✏️ タップで記録 → ページへ</span></div>
     <div class="habit-row-compact">
-      <div class="habit-chip" id="chip-gym" onclick="toggleHabit('gym')"><span class="habit-chip-icon">🏋️</span>筋トレ</div>
-      <div class="habit-chip" id="chip-meal" onclick="toggleHabit('meal')"><span class="habit-chip-icon">🥗</span>食事</div>
-      <div class="habit-chip" id="chip-sleep" onclick="toggleHabit('sleep')"><span class="habit-chip-icon">😴</span>睡眠</div>
-      <div class="habit-chip" id="chip-mouth" onclick="toggleHabit('mouth')"><span class="habit-chip-icon">🦷</span>矯正</div>
-      <div class="habit-chip" id="chip-cia" onclick="toggleHabit('cia')"><span class="habit-chip-icon">📚</span>勉強</div>
-      <div class="habit-chip" id="chip-water" onclick="toggleHabit('water')"><span class="habit-chip-icon">💧</span>水</div>
+      <div class="habit-chip" id="chip-gym" onclick="habitNav('gym')"><span class="habit-chip-icon">🏋️</span>筋トレ</div>
+      <div class="habit-chip" id="chip-meal" onclick="habitNav('meal')"><span class="habit-chip-icon">🥗</span>食事</div>
+      <div class="habit-chip" id="chip-sleep" onclick="habitNav('sleep')"><span class="habit-chip-icon">😴</span>睡眠</div>
+      <div class="habit-chip" id="chip-mouth" onclick="habitNav('mouth')"><span class="habit-chip-icon">🦷</span>矯正</div>
+      <div class="habit-chip" id="chip-cia" onclick="habitNav('cia')"><span class="habit-chip-icon">📚</span>勉強</div>
+      <div class="habit-chip" id="chip-water" onclick="habitNav('water')"><span class="habit-chip-icon">💧</span>水</div>
     </div>
 
     <!-- Priorities -->
@@ -1690,7 +1690,8 @@
     <!-- sync source notice -->
     <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-bottom:4px">
       <span style="font-size:16px">📊</span>
-      <span style="font-size:12px;color:var(--text2)">Google Sheetsと同期 — 記録はスプレッドシートで行ってください</span>
+      <span style="font-size:12px;color:var(--text2);flex:1">Google Sheetsと同期 — 記録はスプレッドシートで行ってください</span>
+      <button onclick="refreshMealData()" style="background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.35);color:var(--blue);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0" id="meal-refresh-btn">🔄 更新</button>
     </div>
 
     <!-- PFC サマリー（表示のみ） -->
@@ -2814,7 +2815,10 @@ function updatePFCStrip() {
   const data = loadData();
   const today = todayKey();
   const pfc = data[today]?.pfc || {};
-  const p = pfc.p || 0, f = pfc.f || 0, c = pfc.c || 0;
+  const summary = data[today]?.foodSummary || {};
+  const p = (pfc.p != null ? pfc.p : null) ?? summary.protein ?? 0;
+  const f = (pfc.f != null ? pfc.f : null) ?? summary.fat ?? 0;
+  const c = (pfc.c != null ? pfc.c : null) ?? summary.carbon ?? 0;
   const kcal = Math.round(p*4 + f*9 + c*4);
   const maxP = 180, maxF = 70, maxC = 250;
   const pBar = document.getElementById('strip-p-bar');
@@ -3252,8 +3256,12 @@ function drawPFCChart() {
   const canvas = document.getElementById('pfc-canvas');
   if (!canvas) return;
   const data = loadData(); const today = todayKey();
+  // pfc（手動入力）か foodSummary（Sheets同期）を優先してフォールバック
   const pfc = data[today]?.pfc || {};
-  const p = pfc.p||0, f = pfc.f||0, c = pfc.c||0;
+  const summary = data[today]?.foodSummary || {};
+  const p = (pfc.p != null ? pfc.p : null) ?? summary.protein ?? 0;
+  const f = (pfc.f != null ? pfc.f : null) ?? summary.fat ?? 0;
+  const c = (pfc.c != null ? pfc.c : null) ?? summary.carbon ?? 0;
   document.getElementById('pfc-p')?.value !== undefined && (document.getElementById('pfc-p').value = p||'');
   document.getElementById('pfc-f')?.value !== undefined && (document.getElementById('pfc-f').value = f||'');
   document.getElementById('pfc-c')?.value !== undefined && (document.getElementById('pfc-c').value = c||'');
@@ -3355,6 +3363,17 @@ function renderMeals() {
   });
 
   container.innerHTML = html;
+}
+
+// 食事タブ手動リフレッシュ
+async function refreshMealData() {
+  const btn = document.getElementById('meal-refresh-btn');
+  if (btn) { btn.textContent = '⏳ 読込中…'; btn.disabled = true; }
+  await loadFromRemote();
+  renderMeals();
+  drawPFCChart();
+  updatePFCStrip();
+  if (btn) { btn.textContent = '✅ 更新済'; btn.disabled = false; setTimeout(() => { btn.textContent = '🔄 更新'; }, 2000); }
 }
 
 // ─── WORK ─────────────────────────────────────────────────────────────────
@@ -3847,6 +3866,21 @@ const _origToggleHabit = toggleHabit;
 function toggleHabit(habit) {
   _origToggleHabit(habit);
   updateSummary();
+}
+
+// 習慣チップ: トグル → 対応タブへ遷移
+const HABIT_TAB_MAP = {
+  gym: 'gym',
+  meal: 'meal',
+  sleep: 'health',
+  mouth: 'health',
+  cia: 'study',
+  water: 'health',
+};
+function habitNav(habit) {
+  toggleHabit(habit);
+  const tab = HABIT_TAB_MAP[habit] || 'today';
+  switchTab(tab);
 }
 </script>
 </body>
