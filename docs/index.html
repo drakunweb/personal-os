@@ -1676,6 +1676,58 @@
       </div>
     </div>
 
+    <div class="section-title">💆 フェイスライン・浮腫み改善 <span class="human-badge">✏️ 毎日チェック</span></div>
+    <div class="card">
+      <div class="card-label" style="margin-bottom:8px">朝の浮腫みケア</div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🧊 冷水で洗顔 or 保冷剤で冷やす</div>
+        <div class="routine-tip">血管収縮で即効</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">💧 起床後すぐ水200ml</div>
+        <div class="routine-tip">代謝促進・リンパ流す</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🤲 フェイスマッサージ（2分）</div>
+        <div class="routine-tip">耳下・鎖骨→リンパ流す</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🏃 軽い有酸素 or ウォーキング</div>
+        <div class="routine-tip">血流UP・浮腫みを燃やす</div>
+      </div>
+      <div class="card-label" style="margin:14px 0 8px">フェイスライン引き締め</div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">😮 舌回し運動（左右各10回）</div>
+        <div class="routine-tip">表情筋トレ</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">😬 あいうえお口体操（10回）</div>
+        <div class="routine-tip">頬・顎のたるみ予防</div>
+      </div>
+      <div class="routine-item">
+        <div class="routine-check" onclick="toggleRoutine(this)"></div>
+        <div class="routine-label">🪒 顎・首筋のマッサージ</div>
+        <div class="routine-tip">二重顎ケア</div>
+      </div>
+      <div class="card-label" style="margin:14px 0 8px">生活習慣（長期効果）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+        <div style="background:var(--card2);border-radius:8px;padding:10px">
+          <div style="font-weight:700;color:var(--red);margin-bottom:4px">❌ 避けるべき</div>
+          <div style="color:var(--text3);line-height:1.8">塩分・加工食品多め<br>アルコール<br>就寝前の水分大量摂取<br>うつ伏せ寝<br>高い枕</div>
+        </div>
+        <div style="background:var(--card2);border-radius:8px;padding:10px">
+          <div style="font-weight:700;color:var(--green);margin-bottom:4px">✅ 続けること</div>
+          <div style="color:var(--text3);line-height:1.8">睡眠7h以上<br>カリウム食材（バナナ等）<br>ジムで筋トレ<br>良い姿勢キープ<br>首筋を伸ばす</div>
+        </div>
+      </div>
+    </div>
+
     <div class="section-title">💇 ヘアスタイル <span class="human-badge">✏️ 毎日チェック</span></div>
     <div class="card">
       <div class="routine-item">
@@ -3616,7 +3668,8 @@ function drawPFCChart() {
   const p = (pfc.p != null ? pfc.p : null) ?? summary.protein ?? 0;
   const f = (pfc.f != null ? pfc.f : null) ?? summary.fat ?? 0;
   const c = (pfc.c != null ? pfc.c : null) ?? summary.carbon ?? 0;
-  const total = Math.round(p*4 + f*9 + c*4);
+  // Sheets同期のcalorieを優先、なければPFC計算値
+  const total = summary.calorie || Math.round(p*4 + f*9 + c*4);
 
   // hidden inputs
   if (document.getElementById('pfc-p')) document.getElementById('pfc-p').value = p;
@@ -3985,14 +4038,15 @@ function renderNewsList() {
 
   container.innerHTML = visible.map(n => {
     const c = NEWS_CAT_COLORS[n.cat] || NEWS_CAT_COLORS.other;
-    return `<div class="news-card" data-cat="${n.cat}">
+    const clickAttr = n.source ? `onclick="window.open('${n.source.replace(/'/g,"\\'")}','_blank')" style="cursor:pointer"` : '';
+    return `<div class="news-card" data-cat="${n.cat}" ${clickAttr}>
       <div class="news-meta">
         <span class="news-cat" style="background:${c.bg};color:${c.color};border-radius:99px;padding:2px 8px;font-size:10px;font-weight:700">${c.label}</span>
-        ${n.source ? `<span class="news-source">${n.source}</span>` : ''}
         <span class="news-time">${n.date || ''}</span>
       </div>
       <div class="news-title">${n.title}</div>
       ${n.body ? `<div class="news-summary">${n.body}</div>` : ''}
+      ${n.note ? `<div style="margin-top:6px;padding:6px 8px;background:rgba(124,58,237,0.10);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;font-size:11px;color:var(--accent);line-height:1.5">📌 ${n.note}</div>` : ''}
     </div>`;
   }).join('');
 
@@ -4122,20 +4176,15 @@ function renderCareerJobList() {
   const visible = all.slice(0, _careerShown);
   container.innerHTML = visible.map(job => {
     const s = JOB_STATUSES[job.status] || JOB_STATUSES.watch;
-    const titleLine = job.url
-      ? `<a href="${job.url}" target="_blank" rel="noopener" style="font-size:14px;font-weight:700;color:var(--blue);text-decoration:none">${job.company} — ${job.position} ↗</a>`
-      : `<div style="font-size:14px;font-weight:700;color:var(--text)">${job.company} — ${job.position}</div>`;
-    return `<div class="card" style="margin-bottom:8px">
-      <div style="display:flex;align-items:flex-start;gap:8px">
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
-            <span class="job-status ${s.cls}">${s.label}</span>
-            <span style="font-size:11px;color:var(--text3)">${job.date || ''}</span>
-          </div>
-          ${titleLine}
-          ${job.note ? `<div style="font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5">${job.note}</div>` : ''}
-        </div>
+    const clickAttr = job.url ? `onclick="window.open('${job.url.replace(/'/g,"\\'")}','_blank')" style="cursor:pointer"` : '';
+    return `<div class="card" style="margin-bottom:8px" ${clickAttr}>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">
+        <span class="job-status ${s.cls}">${s.label}</span>
+        <span style="font-size:11px;color:var(--text3)">${job.date || ''}</span>
+        ${job.url ? `<span style="margin-left:auto;font-size:11px;color:var(--blue)">↗ 開く</span>` : ''}
       </div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${job.company}${job.position ? ' — ' + job.position : ''}</div>
+      ${job.note ? `<div style="font-size:12px;color:var(--text3);margin-top:4px;line-height:1.6">${job.note.replace(/\n/g,'<br>')}</div>` : ''}
     </div>`;
   }).join('');
   if (moreWrap) moreWrap.style.display = _careerShown < all.length ? 'block' : 'none';
@@ -4215,18 +4264,15 @@ function renderSideBoard() {
   const visible = all.slice(0, _sideShown);
   container.innerHTML = visible.map(item => {
     const t = BOARD_TYPES[item.type] || BOARD_TYPES.info;
-    const titleHtml = item.url
-      ? `<a href="${item.url}" target="_blank" rel="noopener" style="font-size:14px;font-weight:700;color:var(--blue);text-decoration:none;word-break:break-all;display:block;margin-bottom:2px">${item.title} ↗</a>`
-      : `<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">${item.title}</div>`;
-    return `<div class="card" style="margin-bottom:8px;border-left:3px solid ${t.color}">
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
-          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${t.bg};color:${t.color};flex-shrink:0">${t.label}</span>
-          <span style="font-size:11px;color:var(--text3)">${item.date || ''}</span>
-        </div>
-        ${titleHtml}
-        ${item.note ? `<div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">${item.note}</div>` : ''}
+    const clickAttr = item.url ? `onclick="window.open('${item.url.replace(/'/g,"\\'")}','_blank')" style="cursor:pointer"` : '';
+    return `<div class="card" style="margin-bottom:8px;border-left:3px solid ${t.color}" ${clickAttr}>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${t.bg};color:${t.color};flex-shrink:0">${t.label}</span>
+        <span style="font-size:11px;color:var(--text3)">${item.date || ''}</span>
+        ${item.url ? `<span style="margin-left:auto;font-size:11px;color:var(--blue)">↗ 開く</span>` : ''}
       </div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px">${item.title}</div>
+      ${item.note ? `<div style="font-size:12px;color:var(--text3);line-height:1.6;margin-top:2px">${item.note.replace(/\n/g,'<br>')}</div>` : ''}
     </div>`;
   }).join('');
   if (moreWrap) moreWrap.style.display = _sideShown < all.length ? 'block' : 'none';
