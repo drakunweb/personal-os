@@ -910,6 +910,25 @@
     .cat-filter { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
     .cat-pill { font-size:12px; font-weight:600; padding:6px 14px; border-radius:99px; border:1px solid var(--border); background:var(--card); color:var(--text3); cursor:pointer; transition:all .15s; }
     .cat-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    /* News filter chips — visually distinct from main tab pills */
+    .news-filter { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; padding:2px 0; }
+    .news-chip { font-size:11px; font-weight:700; padding:4px 10px; border-radius:6px; border:1px solid var(--border2); background:var(--card2); color:var(--text3); cursor:pointer; transition:all .15s; letter-spacing:.01em; }
+    .news-chip.active { background:rgba(124,58,237,0.18); border-color:var(--accent); color:var(--accent); }
+    /* Career job status badges */
+    .job-status { font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px; flex-shrink:0; }
+    .status-watch  { background:rgba(255,255,255,0.06); color:var(--text3); }
+    .status-applied{ background:rgba(59,130,246,0.15);  color:var(--blue); }
+    .status-first  { background:rgba(245,158,11,0.15);  color:var(--yellow); }
+    .status-final  { background:rgba(239,68,68,0.15);   color:var(--red); }
+    .status-offer  { background:rgba(16,185,129,0.15);  color:var(--green); }
+    .status-pass   { background:rgba(255,255,255,0.04); color:var(--text3); text-decoration:line-through; }
+    /* Career checklist */
+    .career-check-item { display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border); }
+    .career-check-item:last-child { border-bottom:none; }
+    .career-checkbox { width:18px; height:18px; border-radius:4px; border:2px solid var(--border2); background:none; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; }
+    .career-checkbox.done { background:var(--green); border-color:var(--green); color:#fff; }
+    .career-check-label { flex:1; font-size:13px; color:var(--text2); }
+    .career-check-label.done { text-decoration:line-through; color:var(--text3); }
 
     /* ─── IDEAS ─── */
     .idea-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; }
@@ -1341,6 +1360,7 @@
       <div class="tab-menu-item" data-tab="style" onclick="switchTab('style');toggleTabMenu()">👔<span>スタイル</span></div>
       <div class="tab-menu-item" data-tab="ideas" onclick="switchTab('ideas');toggleTabMenu()">💡<span>アイデア</span></div>
       <div class="tab-menu-item" data-tab="weekly" onclick="switchTab('weekly');toggleTabMenu()">📊<span>週次</span></div>
+      <div class="tab-menu-item" data-tab="career" onclick="switchTab('career');toggleTabMenu()">🎯<span>転職準備</span></div>
       <div class="tab-menu-item" data-tab="news" onclick="switchTab('news');toggleTabMenu()">📰<span>ニュース</span></div>
       <div class="tab-menu-item" data-tab="aiagent" onclick="switchTab('aiagent');toggleTabMenu()">🤖<span>AI指示</span></div>
     </div>
@@ -2104,17 +2124,62 @@
   </div>
 
   <!-- TAB: NEWS (ニュース) -->
+  <!-- TAB: CAREER (転職準備) -->
+  <div class="tab-content" id="tab-career">
+
+    <!-- 求人管理 -->
+    <div class="section-title">📋 求人・選考管理 <span class="human-badge">✏️ 手入力</span></div>
+    <div id="career-job-list"></div>
+    <div class="card" style="margin-top:6px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input class="add-input" id="job-company" placeholder="会社名" style="width:100%;box-sizing:border-box" />
+        <input class="add-input" id="job-position" placeholder="職種・ポジション" style="width:100%;box-sizing:border-box" />
+        <input class="add-input" id="job-url" type="url" placeholder="求人URL（任意）" style="width:100%;box-sizing:border-box" />
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="job-status" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:8px 10px;font-family:inherit;outline:none;font-size:13px;flex:1">
+            <option value="watch">👀 気になる</option>
+            <option value="applied">📨 応募済み</option>
+            <option value="first">🗣️ 一次面接</option>
+            <option value="final">🏁 最終面接</option>
+            <option value="offer">🎉 内定</option>
+            <option value="pass">❌ 見送り</option>
+          </select>
+          <button class="add-btn" onclick="addJobItem()" style="flex:none">＋</button>
+        </div>
+        <textarea class="notes-area" id="job-note" placeholder="メモ・条件・感想（任意）" rows="2" style="margin:0"></textarea>
+      </div>
+    </div>
+
+    <!-- 準備チェックリスト -->
+    <div class="section-title" style="margin-top:16px">✅ 転職準備チェック <span class="human-badge">✏️ タップで完了</span></div>
+    <div class="card">
+      <div id="career-checklist"></div>
+    </div>
+
+    <!-- メモ -->
+    <div class="section-title" style="margin-top:14px">📝 転職メモ <span class="human-badge">✏️ 手入力</span></div>
+    <textarea class="notes-area" id="career-notes" placeholder="転職に関する気づき・方針・スケジュール..." rows="4" oninput="saveCareerNotes()"></textarea>
+
+    <!-- AI分析 -->
+    <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
+    <div class="ai-card">
+      <div class="ai-badge">🤖 Career Agent</div>
+      <div class="ai-content">監査法人2年目・USCPA合格・フリーランス経験あり のプロフィールは転職市場で希少価値が高い。CIA取得後はBig4コンサル・FASへの転職ルートが開きやすい。現職での実績を2026年末まで積み上げてから動くのが最適タイミング。</div>
+      <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
+    </div>
+
+  </div>
+
   <div class="tab-content" id="tab-news">
 
     <!-- フィルター -->
-    <div class="cat-filter">
-      <div class="cat-pill active" onclick="filterNews('all',this)">すべて</div>
-      <div class="cat-pill" onclick="filterNews('biz',this)">ビジネス</div>
-      <div class="cat-pill" onclick="filterNews('health',this)">健康</div>
-      <div class="cat-pill" onclick="filterNews('tech',this)">テック</div>
-      <div class="cat-pill" onclick="filterNews('fin',this)">経済</div>
-      <div class="cat-pill" onclick="filterNews('career',this)">転職準備</div>
-      <div class="cat-pill" onclick="filterNews('other',this)">その他</div>
+    <div class="news-filter">
+      <div class="news-chip active" onclick="filterNews('all',this)">すべて</div>
+      <div class="news-chip" onclick="filterNews('biz',this)">💼 ビジネス</div>
+      <div class="news-chip" onclick="filterNews('health',this)">🏃 健康</div>
+      <div class="news-chip" onclick="filterNews('tech',this)">🤖 テック</div>
+      <div class="news-chip" onclick="filterNews('fin',this)">💴 経済</div>
+      <div class="news-chip" onclick="filterNews('other',this)">📌 その他</div>
     </div>
 
     <!-- ニュース一覧（5件ずつ積み上げ） -->
@@ -2691,6 +2756,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateTaskBoard();
   renderNewsList();
   renderSideBoard();
+  loadCareerTab();
 });
 
 function setHeaderDate() {
@@ -3319,7 +3385,7 @@ function drawWeightChart() {
 }
 
 // ─── TABS ─────────────────────────────────────────────────────────────────
-const TAB_ORDER = ['today','schedule','health','gym','meal','study','work','goals','finance','side','shopping','style','ideas','weekly','news','aiagent'];
+const TAB_ORDER = ['today','schedule','health','gym','meal','study','work','goals','finance','side','career','shopping','style','ideas','weekly','news','aiagent'];
 
 function switchTab(name) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -3899,7 +3965,6 @@ const NEWS_CAT_COLORS = {
   health: { bg:'rgba(16,185,129,0.12)', color:'var(--green)',  label:'🏃 健康' },
   tech:   { bg:'rgba(59,130,246,0.12)', color:'var(--blue)',   label:'🤖 テック' },
   fin:    { bg:'rgba(245,158,11,0.12)', color:'var(--yellow)', label:'💴 経済' },
-  career: { bg:'rgba(239,68,68,0.12)', color:'var(--red)',     label:'🎯 転職準備' },
   other:  { bg:'rgba(255,255,255,0.06)', color:'var(--text3)', label:'📌 その他' },
 };
 
@@ -3952,7 +4017,7 @@ function renderNewsList() {
 function filterNews(cat, el) {
   _newsCat = cat;
   _newsShown = NEWS_PAGE_SIZE;
-  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.news-chip').forEach(p => p.classList.remove('active'));
   if (el) el.classList.add('active');
   renderNewsList();
 }
@@ -3985,6 +4050,135 @@ function deleteNewsItem(id) {
   data.newsItems = data.newsItems.filter(n => n.id !== id);
   saveData(data);
   renderNewsList();
+}
+
+// ─── CAREER ───────────────────────────────────────────────────────────────
+const JOB_STATUSES = {
+  watch:   { label:'👀 気になる', cls:'status-watch' },
+  applied: { label:'📨 応募済み', cls:'status-applied' },
+  first:   { label:'🗣️ 一次面接', cls:'status-first' },
+  final:   { label:'🏁 最終面接', cls:'status-final' },
+  offer:   { label:'🎉 内定',    cls:'status-offer' },
+  pass:    { label:'❌ 見送り',  cls:'status-pass' },
+};
+
+const CAREER_CHECKS_DEFAULT = [
+  '職務経歴書を更新する',
+  '履歴書（証明写真含む）を準備する',
+  'USCPA資格を職歴に明記する',
+  'CIA学習・取得スケジュールを確定する',
+  'LinkedIn / Wantedly プロフィールを整備する',
+  '志望動機テンプレートを作成する',
+  'ポートフォリオサイトを更新する',
+  '転職エージェントに登録する',
+  '希望年収・条件を整理する',
+  '現職でのアピール実績をリストアップする',
+];
+
+function renderCareerJobList() {
+  const container = document.getElementById('career-job-list');
+  if (!container) return;
+  const data = loadData();
+  const jobs = (data.careerJobs || []).sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || b.id - a.id);
+  if (!jobs.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px 0;font-size:13px;color:var(--text3)">求人を追加してください</div>';
+    return;
+  }
+  container.innerHTML = jobs.map(job => {
+    const s = JOB_STATUSES[job.status] || JOB_STATUSES.watch;
+    const titleLine = job.url
+      ? `<a href="${job.url}" target="_blank" rel="noopener" style="font-size:14px;font-weight:700;color:var(--blue);text-decoration:none">${job.company} — ${job.position} ↗</a>`
+      : `<div style="font-size:14px;font-weight:700;color:var(--text)">${job.company} — ${job.position}</div>`;
+    return `<div class="card" style="margin-bottom:8px">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
+            <span class="job-status ${s.cls}">${s.label}</span>
+            <span style="font-size:11px;color:var(--text3)">${job.date || ''}</span>
+            <select onchange="updateJobStatus(${job.id},this.value)" style="margin-left:auto;background:var(--card2);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 4px;font-size:11px;font-family:inherit;outline:none">
+              ${Object.entries(JOB_STATUSES).map(([k,v]) => `<option value="${k}"${job.status===k?' selected':''}>${v.label}</option>`).join('')}
+            </select>
+          </div>
+          ${titleLine}
+          ${job.note ? `<div style="font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5">${job.note}</div>` : ''}
+        </div>
+        <span style="cursor:pointer;color:var(--text3);font-size:18px;flex-shrink:0" onclick="deleteJobItem(${job.id})">×</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addJobItem() {
+  const company  = document.getElementById('job-company')?.value.trim();
+  const position = document.getElementById('job-position')?.value.trim();
+  if (!company && !position) return;
+  const data = loadData();
+  if (!data.careerJobs) data.careerJobs = [];
+  data.careerJobs.push({
+    id:       Date.now(),
+    company:  company || '—',
+    position: position || '—',
+    url:      document.getElementById('job-url')?.value.trim()    || '',
+    status:   document.getElementById('job-status')?.value         || 'watch',
+    note:     document.getElementById('job-note')?.value.trim()    || '',
+    date:     todayKey(),
+  });
+  saveData(data);
+  ['job-company','job-position','job-url','job-note'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  renderCareerJobList();
+  syncToRemote();
+}
+
+function updateJobStatus(id, status) {
+  const data = loadData();
+  const job = (data.careerJobs || []).find(j => j.id === id);
+  if (job) { job.status = status; saveData(data); renderCareerJobList(); }
+}
+
+function deleteJobItem(id) {
+  const data = loadData();
+  data.careerJobs = (data.careerJobs || []).filter(j => j.id !== id);
+  saveData(data);
+  renderCareerJobList();
+  syncToRemote();
+}
+
+function renderCareerChecklist() {
+  const container = document.getElementById('career-checklist');
+  if (!container) return;
+  const data = loadData();
+  if (!data.careerChecks) data.careerChecks = {};
+  container.innerHTML = CAREER_CHECKS_DEFAULT.map((label, i) => {
+    const done = !!data.careerChecks[i];
+    return `<div class="career-check-item">
+      <div class="career-checkbox${done ? ' done' : ''}" onclick="toggleCareerCheck(${i})">${done ? '✓' : ''}</div>
+      <div class="career-check-label${done ? ' done' : ''}">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCareerCheck(i) {
+  const data = loadData();
+  if (!data.careerChecks) data.careerChecks = {};
+  data.careerChecks[i] = !data.careerChecks[i];
+  saveData(data);
+  renderCareerChecklist();
+}
+
+function saveCareerNotes() {
+  const data = loadData();
+  data.careerNotes = document.getElementById('career-notes')?.value || '';
+  saveData(data);
+}
+
+function loadCareerTab() {
+  const data = loadData();
+  const notesEl = document.getElementById('career-notes');
+  if (notesEl) notesEl.value = data.careerNotes || '';
+  renderCareerJobList();
+  renderCareerChecklist();
 }
 
 // ─── SIDE BOARD ───────────────────────────────────────────────────────────
