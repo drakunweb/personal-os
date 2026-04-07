@@ -231,10 +231,15 @@ function syncCalendarEvents() {
 
 // ─── DB2: ニュース・副業求人・転職求人 同期 ──────────────────────────────────
 /**
- * シート構造（各シートの1行目はヘッダー）
- * ニュース:    date | title | source | cat (biz/health/tech/fin/other) | body
- * 副業求人:    date | title | url | type (job/project/info) | note
- * 転職求人:    date | company | position | url | status (watch/applied/first/final/offer/pass) | note
+ * スプレッドシート: Databese_PerOS (ID: DB2_ID)
+ *
+ * [news]    date | category | topic | about | url | what_for
+ * [sidebis] date | name | about | rate or salary | platform | url
+ * [newjob]  date | name | about | rate or salary | platform | url
+ *
+ * category → app の cat マッピング:
+ *   business/biz → 'biz', health → 'health', tech → 'tech',
+ *   finance/economy/fin → 'fin', その他 → 'other'
  */
 function syncDB2() {
   let ss;
@@ -247,85 +252,103 @@ function syncDB2() {
 
   const payload = {};
 
-  // ── ニュース ──
+  // カテゴリ文字列 → app の cat キー変換
+  function toCat(raw) {
+    const s = String(raw || '').toLowerCase().trim();
+    if (s.match(/biz|business|work|監査|audit/)) return 'biz';
+    if (s.match(/health|fitness|gym|医療|健康/))  return 'health';
+    if (s.match(/tech|technology|it|ai|テック/))   return 'tech';
+    if (s.match(/fin|finance|economy|投資|経済/))  return 'fin';
+    return 'other';
+  }
+
+  function toDate(val) {
+    if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Tokyo', 'yyyy-MM-dd');
+    return String(val || '').trim();
+  }
+
+  // ── news シート ──
   try {
-    const sheet = ss.getSheetByName('ニュース') || ss.getSheetByName('news') || ss.getSheets()[0];
+    const sheet = ss.getSheetByName('news');
     if (sheet) {
       const rows = sheet.getDataRange().getValues();
-      const headers = rows[0].map(h => String(h).trim().toLowerCase());
+      // headers: date(0) category(1) topic(2) about(3) url(4) what_for(5)
       const items = [];
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        if (!r[0] && !r[1]) continue;
-        const obj = {};
-        headers.forEach((h, j) => obj[h] = r[j]);
+        if (!r[2] && !r[1]) continue; // topic空ならスキップ
         items.unshift({
-          id:     i * 1000 + Date.now() % 1000,
-          title:  String(obj['title'] || obj['タイトル'] || '').trim(),
-          source: String(obj['source'] || obj['ソース'] || '').trim(),
-          cat:    String(obj['cat'] || obj['カテゴリ'] || 'other').trim(),
-          body:   String(obj['body'] || obj['内容'] || '').trim(),
-          date:   obj['date'] instanceof Date ? Utilities.formatDate(obj['date'], 'Asia/Tokyo', 'yyyy-MM-dd') : String(obj['date'] || '').trim(),
+          id:     i * 10000,
+          date:   toDate(r[0]),
+          cat:    toCat(r[1]),
+          title:  String(r[2] || '').trim(),
+          body:   String(r[3] || '').trim(),
+          source: String(r[4] || '').trim(),   // url → source として表示
+          note:   String(r[5] || '').trim(),   // what_for → note
         });
       }
       if (items.length) payload['newsItems'] = items;
-      Logger.log('ニュース: ' + items.length + '件');
+      Logger.log('news: ' + items.length + '件');
     }
-  } catch (e) { Logger.log('ニュース同期エラー: ' + e.message); }
+  } catch (e) { Logger.log('news 同期エラー: ' + e.message); }
 
-  // ── 副業求人 ──
+  // ── sidebis シート（副業求人）──
+  // date(0) name(1) about(2) rate or salary(3) platform(4) url(5)
   try {
-    const sheet = ss.getSheetByName('副業求人') || ss.getSheetByName('side') || ss.getSheets()[1];
+    const sheet = ss.getSheetByName('sidebis');
     if (sheet) {
       const rows = sheet.getDataRange().getValues();
-      const headers = rows[0].map(h => String(h).trim().toLowerCase());
       const items = [];
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        if (!r[0] && !r[1]) continue;
-        const obj = {};
-        headers.forEach((h, j) => obj[h] = r[j]);
+        if (!r[1]) continue;
+        const rate = String(r[3] || '').trim();
+        const platform = String(r[4] || '').trim();
+        const note = [rate ? '💰 ' + rate : '', platform ? '📍 ' + platform : ''].filter(Boolean).join(' / ');
         items.unshift({
-          id:    i * 1000,
-          title: String(obj['title'] || obj['タイトル'] || '').trim(),
-          url:   String(obj['url'] || '').trim(),
-          type:  String(obj['type'] || obj['種別'] || 'info').trim(),
-          note:  String(obj['note'] || obj['メモ'] || '').trim(),
-          date:  obj['date'] instanceof Date ? Utilities.formatDate(obj['date'], 'Asia/Tokyo', 'yyyy-MM-dd') : String(obj['date'] || '').trim(),
+          id:    i * 10000,
+          date:  toDate(r[0]),
+          title: String(r[1] || '').trim(),
+          note:  (String(r[2] || '').trim() + (note ? '\n' + note : '')).trim(),
+          url:   String(r[5] || '').trim(),
+          type:  'project',
           pin:   false,
         });
       }
       if (items.length) payload['sidePosts'] = items;
-      Logger.log('副業求人: ' + items.length + '件');
+      Logger.log('sidebis: ' + items.length + '件');
     }
-  } catch (e) { Logger.log('副業求人同期エラー: ' + e.message); }
+  } catch (e) { Logger.log('sidebis 同期エラー: ' + e.message); }
 
-  // ── 転職求人 ──
+  // ── newjob シート（転職求人）──
+  // date(0) name(1) about(2) rate or salary(3) platform(4) url(5)
   try {
-    const sheet = ss.getSheetByName('転職求人') || ss.getSheetByName('career') || ss.getSheets()[2];
+    const sheet = ss.getSheetByName('newjob');
     if (sheet) {
       const rows = sheet.getDataRange().getValues();
-      const headers = rows[0].map(h => String(h).trim().toLowerCase());
       const items = [];
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        if (!r[0] && !r[1]) continue;
-        const obj = {};
-        headers.forEach((h, j) => obj[h] = r[j]);
+        if (!r[1]) continue;
+        const rate = String(r[3] || '').trim();
+        const platform = String(r[4] || '').trim();
+        const note = [rate ? '💰 ' + rate : '', platform ? '📍 ' + platform : ''].filter(Boolean).join(' / ');
+        // name列を会社名 / 職種に分割試みる（スラッシュ区切り）
+        const nameParts = String(r[1] || '').split(/[\/｜|]/).map(s => s.trim());
         items.unshift({
-          id:       i * 1000,
-          company:  String(obj['company'] || obj['会社名'] || '').trim(),
-          position: String(obj['position'] || obj['職種'] || '').trim(),
-          url:      String(obj['url'] || '').trim(),
-          status:   String(obj['status'] || obj['ステータス'] || 'watch').trim(),
-          note:     String(obj['note'] || obj['メモ'] || '').trim(),
-          date:     obj['date'] instanceof Date ? Utilities.formatDate(obj['date'], 'Asia/Tokyo', 'yyyy-MM-dd') : String(obj['date'] || '').trim(),
+          id:       i * 10000,
+          date:     toDate(r[0]),
+          company:  nameParts[0] || String(r[1]).trim(),
+          position: nameParts[1] || String(r[2] || '').trim().slice(0, 30),
+          note:     (String(r[2] || '').trim() + (note ? '\n' + note : '')).trim(),
+          url:      String(r[5] || '').trim(),
+          status:   'watch',
         });
       }
       if (items.length) payload['careerJobs'] = items;
-      Logger.log('転職求人: ' + items.length + '件');
+      Logger.log('newjob: ' + items.length + '件');
     }
-  } catch (e) { Logger.log('転職求人同期エラー: ' + e.message); }
+  } catch (e) { Logger.log('newjob 同期エラー: ' + e.message); }
 
   if (Object.keys(payload).length > 0) {
     const ok = patchAPI(payload);
