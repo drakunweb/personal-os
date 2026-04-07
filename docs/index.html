@@ -2144,27 +2144,15 @@
   <!-- TAB: CAREER (転職準備) -->
   <div class="tab-content" id="tab-career">
 
-    <!-- 求人管理 -->
-    <div class="section-title">📋 求人・選考管理 <span class="human-badge">✏️ 手入力</span></div>
+    <!-- 求人管理（Sheets同期） -->
+    <div class="section-title">📋 求人・選考管理 <span class="ai-label-badge">📊 Sheets同期</span></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px;color:var(--text2)">
+      <span>📊</span><span style="flex:1">スプレッドシート（newjob）と同期</span>
+      <button onclick="refreshCareerJobs()" id="career-sync-btn" style="background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.3);color:var(--blue);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 更新</button>
+    </div>
     <div id="career-job-list"></div>
-    <div class="card" style="margin-top:6px">
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <input class="add-input" id="job-company" placeholder="会社名" style="width:100%;box-sizing:border-box" />
-        <input class="add-input" id="job-position" placeholder="職種・ポジション" style="width:100%;box-sizing:border-box" />
-        <input class="add-input" id="job-url" type="url" placeholder="求人URL（任意）" style="width:100%;box-sizing:border-box" />
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <select id="job-status" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:8px 10px;font-family:inherit;outline:none;font-size:13px;flex:1">
-            <option value="watch">👀 気になる</option>
-            <option value="applied">📨 応募済み</option>
-            <option value="first">🗣️ 一次面接</option>
-            <option value="final">🏁 最終面接</option>
-            <option value="offer">🎉 内定</option>
-            <option value="pass">❌ 見送り</option>
-          </select>
-          <button class="add-btn" onclick="addJobItem()" style="flex:none">＋</button>
-        </div>
-        <textarea class="notes-area" id="job-note" placeholder="メモ・条件・感想（任意）" rows="2" style="margin:0"></textarea>
-      </div>
+    <div id="career-load-more-wrap" style="text-align:center;margin:8px 0;display:none">
+      <button class="btn btn-ghost" onclick="loadMoreCareerJobs()" style="width:100%;justify-content:center">さらに読み込む ↓</button>
     </div>
 
     <!-- 準備チェックリスト -->
@@ -2199,33 +2187,14 @@
       <div class="news-chip" onclick="filterNews('other',this)">📌 その他</div>
     </div>
 
-    <!-- ニュース一覧（5件ずつ積み上げ） -->
+    <!-- ニュース一覧（Sheets同期・5件ずつ） -->
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px;color:var(--text2)">
+      <span>📊</span><span style="flex:1">スプレッドシート（news）と同期</span>
+      <button onclick="refreshNewsData()" id="news-sync-btn" style="background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.3);color:var(--blue);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 更新</button>
+    </div>
     <div id="news-list"></div>
     <div id="news-load-more-wrap" style="text-align:center;margin:8px 0;display:none">
-      <button class="btn btn-ghost" onclick="loadMoreNews()" style="width:100%;justify-content:center">
-        さらに読み込む ↓
-      </button>
-    </div>
-
-    <!-- クイック追加 -->
-    <div class="section-title" style="margin-top:14px">記事を追加 <span class="human-badge">✏️ 手入力</span></div>
-    <div class="card">
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <input class="add-input" id="news-title-input" placeholder="タイトル・見出し" style="width:100%;box-sizing:border-box" />
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <select id="news-cat-select" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:8px 10px;font-family:inherit;outline:none;font-size:13px;flex:1">
-            <option value="biz">💼 ビジネス</option>
-            <option value="health">🏃 健康</option>
-            <option value="tech">🤖 テック</option>
-            <option value="fin">💴 経済</option>
-            <option value="career">🎯 転職準備</option>
-            <option value="other">📌 その他</option>
-          </select>
-          <input class="add-input" id="news-source-input" placeholder="ソース名（任意）" style="flex:1;min-width:100px" />
-          <button class="add-btn" onclick="addNewsItem()" style="flex:none">＋</button>
-        </div>
-        <textarea class="notes-area" id="news-body-input" placeholder="メモ・要約（任意）" rows="2" style="margin:0"></textarea>
-      </div>
+      <button class="btn btn-ghost" onclick="loadMoreNews()" style="width:100%;justify-content:center">さらに読み込む ↓</button>
     </div>
 
     <div class="section-title">AI分析 <span class="ai-label-badge">🤖 AIが更新</span></div>
@@ -2567,23 +2536,15 @@
       <div class="ai-updated">🤖 AIエージェント連携後に自動更新（現在は仮データ）</div>
     </div>
 
-    <!-- 案件・求人掲示板 -->
-    <div class="section-title">📌 案件・求人掲示板 <span class="human-badge">✏️ 手入力</span></div>
+    <!-- 案件掲示板（Sheets同期） -->
+    <div class="section-title">📌 案件掲示板 <span class="ai-label-badge">📊 Sheets同期</span></div>
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px;color:var(--text2)">
+      <span>📊</span><span style="flex:1">スプレッドシート（sidebis）と同期</span>
+      <button onclick="refreshSideBoard()" id="side-sync-btn" style="background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.3);color:var(--blue);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer">🔄 更新</button>
+    </div>
     <div id="side-board-list"></div>
-    <div class="card" style="margin-top:6px">
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <input class="add-input" id="board-title" placeholder="案件名・求人タイトル" style="width:100%;box-sizing:border-box" />
-        <input class="add-input" id="board-url" type="url" placeholder="URL（任意）" style="width:100%;box-sizing:border-box" />
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <select id="board-type" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);padding:8px 10px;font-family:inherit;outline:none;font-size:13px;flex:none">
-            <option value="job">💼 求人</option>
-            <option value="project">🚀 案件</option>
-            <option value="info">📌 情報</option>
-          </select>
-          <input class="add-input" id="board-note" placeholder="メモ・条件・感想" style="flex:1;min-width:0" />
-          <button class="add-btn" onclick="addBoardItem()" style="flex:none">＋</button>
-        </div>
-      </div>
+    <div id="side-load-more-wrap" style="text-align:center;margin:8px 0;display:none">
+      <button class="btn btn-ghost" onclick="loadMoreSidePosts()" style="width:100%;justify-content:center">さらに読み込む ↓</button>
     </div>
 
     <div class="section-title">コンプライアンスメモ <span class="human-badge">✏️ 手入力</span></div>
@@ -3995,7 +3956,6 @@ function toggleRoutine(el) {
 }
 
 // ─── NEWS ─────────────────────────────────────────────────────────────────
-// ─── NEWS ─────────────────────────────────────────────────────────────────
 const NEWS_PAGE_SIZE = 5;
 let _newsCat = 'all';
 let _newsShown = NEWS_PAGE_SIZE;
@@ -4008,30 +3968,17 @@ const NEWS_CAT_COLORS = {
   other:  { bg:'rgba(255,255,255,0.06)', color:'var(--text3)', label:'📌 その他' },
 };
 
-const DEFAULT_NEWS = [
-  { id:1, cat:'biz', source:'日経ビジネス', title:'監査法人のDX推進——AIによる監査効率化の最前線', body:'大手監査法人がAIを活用した自動化ツールを導入し、監査業務の生産性が30%向上。', date:'2026-04-07' },
-  { id:2, cat:'health', source:'Healthline', title:'睡眠と筋肉合成の関係——成長ホルモンの最適分泌タイミング', body:'研究によると就寝後1〜3時間が成長ホルモン分泌のピーク。22〜24時就寝が体組成改善に最も効果的。', date:'2026-04-07' },
-  { id:3, cat:'fin', source:'Bloomberg', title:'新NISAの活用戦略——積立と成長投資枠の最適配分', body:'2024年から始まった新NISAの非課税枠を最大化するための実践的な投資戦略。', date:'2026-04-06' },
-  { id:4, cat:'tech', source:'TechCrunch', title:'Claude 3.7——AIエージェントの実用化が本格加速', body:'Anthropicの最新モデルがビジネス現場での自律的タスク実行を可能に。', date:'2026-04-06' },
-  { id:5, cat:'health', source:'筋トレ研究所', title:'20代男性の筋肥大に最適なトレーニング頻度——週3〜4回が最適解', body:'メタ分析の結果、各部位週2回の刺激が筋タンパク合成を最大化。', date:'2026-04-05' },
-];
-
-function getNewsList() {
-  const data = loadData();
-  const stored = data.newsItems || [];
-  // stored items first (newest), then defaults as seed
-  return stored.length ? stored : DEFAULT_NEWS;
-}
-
 function renderNewsList() {
-  const all = getNewsList();
+  const data = loadData();
+  // 日付降順ソート
+  const all = (data.newsItems || []).sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
   const filtered = _newsCat === 'all' ? all : all.filter(n => n.cat === _newsCat);
   const visible = filtered.slice(0, _newsShown);
   const container = document.getElementById('news-list');
   if (!container) return;
 
   if (!filtered.length) {
-    container.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:13px;color:var(--text3)">ニュースがありません</div>';
+    container.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:13px;color:var(--text3)">スプレッドシートから同期するとここに表示されます</div>';
     document.getElementById('news-load-more-wrap').style.display = 'none';
     return;
   }
@@ -4043,7 +3990,6 @@ function renderNewsList() {
         <span class="news-cat" style="background:${c.bg};color:${c.color};border-radius:99px;padding:2px 8px;font-size:10px;font-weight:700">${c.label}</span>
         ${n.source ? `<span class="news-source">${n.source}</span>` : ''}
         <span class="news-time">${n.date || ''}</span>
-        <span style="margin-left:auto;cursor:pointer;color:var(--text3);font-size:16px" onclick="deleteNewsItem(${n.id})">×</span>
       </div>
       <div class="news-title">${n.title}</div>
       ${n.body ? `<div class="news-summary">${n.body}</div>` : ''}
@@ -4067,29 +4013,13 @@ function loadMoreNews() {
   renderNewsList();
 }
 
-function addNewsItem() {
-  const title = document.getElementById('news-title-input')?.value.trim();
-  if (!title) return;
-  const body = document.getElementById('news-body-input')?.value.trim() || '';
-  const cat = document.getElementById('news-cat-select')?.value || 'other';
-  const source = document.getElementById('news-source-input')?.value.trim() || '';
-  const data = loadData();
-  if (!data.newsItems) data.newsItems = [];
-  data.newsItems.unshift({ id: Date.now(), cat, source, title, body, date: todayKey() });
-  saveData(data);
-  document.getElementById('news-title-input').value = '';
-  document.getElementById('news-body-input').value = '';
-  document.getElementById('news-source-input').value = '';
+async function refreshNewsData() {
+  const btn = document.getElementById('news-sync-btn');
+  if (btn) { btn.textContent = '⏳…'; btn.disabled = true; }
+  await loadFromRemote();
   _newsShown = NEWS_PAGE_SIZE;
   renderNewsList();
-}
-
-function deleteNewsItem(id) {
-  const data = loadData();
-  if (!data.newsItems) return;
-  data.newsItems = data.newsItems.filter(n => n.id !== id);
-  saveData(data);
-  renderNewsList();
+  if (btn) { btn.textContent = '✅ 完了'; btn.disabled = false; setTimeout(() => { btn.textContent = '🔄 更新'; }, 2000); }
 }
 
 // ─── LIFE TODO ────────────────────────────────────────────────────────────
@@ -4175,16 +4105,22 @@ const CAREER_CHECKS_DEFAULT = [
   '現職でのアピール実績をリストアップする',
 ];
 
+const CAREER_PAGE_SIZE = 5;
+let _careerShown = CAREER_PAGE_SIZE;
+
 function renderCareerJobList() {
   const container = document.getElementById('career-job-list');
+  const moreWrap  = document.getElementById('career-load-more-wrap');
   if (!container) return;
   const data = loadData();
-  const jobs = (data.careerJobs || []).sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || b.id - a.id);
-  if (!jobs.length) {
-    container.innerHTML = '<div style="text-align:center;padding:16px 0;font-size:13px;color:var(--text3)">求人を追加してください</div>';
+  const all = (data.careerJobs || []).sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+  if (!all.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px 0;font-size:13px;color:var(--text3)">スプレッドシートから同期するとここに表示されます</div>';
+    if (moreWrap) moreWrap.style.display = 'none';
     return;
   }
-  container.innerHTML = jobs.map(job => {
+  const visible = all.slice(0, _careerShown);
+  container.innerHTML = visible.map(job => {
     const s = JOB_STATUSES[job.status] || JOB_STATUSES.watch;
     const titleLine = job.url
       ? `<a href="${job.url}" target="_blank" rel="noopener" style="font-size:14px;font-weight:700;color:var(--blue);text-decoration:none">${job.company} — ${job.position} ↗</a>`
@@ -4195,54 +4131,28 @@ function renderCareerJobList() {
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap">
             <span class="job-status ${s.cls}">${s.label}</span>
             <span style="font-size:11px;color:var(--text3)">${job.date || ''}</span>
-            <select onchange="updateJobStatus(${job.id},this.value)" style="margin-left:auto;background:var(--card2);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:2px 4px;font-size:11px;font-family:inherit;outline:none">
-              ${Object.entries(JOB_STATUSES).map(([k,v]) => `<option value="${k}"${job.status===k?' selected':''}>${v.label}</option>`).join('')}
-            </select>
           </div>
           ${titleLine}
           ${job.note ? `<div style="font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5">${job.note}</div>` : ''}
         </div>
-        <span style="cursor:pointer;color:var(--text3);font-size:18px;flex-shrink:0" onclick="deleteJobItem(${job.id})">×</span>
       </div>
     </div>`;
   }).join('');
+  if (moreWrap) moreWrap.style.display = _careerShown < all.length ? 'block' : 'none';
 }
 
-function addJobItem() {
-  const company  = document.getElementById('job-company')?.value.trim();
-  const position = document.getElementById('job-position')?.value.trim();
-  if (!company && !position) return;
-  const data = loadData();
-  if (!data.careerJobs) data.careerJobs = [];
-  data.careerJobs.push({
-    id:       Date.now(),
-    company:  company || '—',
-    position: position || '—',
-    url:      document.getElementById('job-url')?.value.trim()    || '',
-    status:   document.getElementById('job-status')?.value         || 'watch',
-    note:     document.getElementById('job-note')?.value.trim()    || '',
-    date:     todayKey(),
-  });
-  saveData(data);
-  ['job-company','job-position','job-url','job-note'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
+function loadMoreCareerJobs() {
+  _careerShown += CAREER_PAGE_SIZE;
   renderCareerJobList();
-  syncToRemote();
 }
 
-function updateJobStatus(id, status) {
-  const data = loadData();
-  const job = (data.careerJobs || []).find(j => j.id === id);
-  if (job) { job.status = status; saveData(data); renderCareerJobList(); }
-}
-
-function deleteJobItem(id) {
-  const data = loadData();
-  data.careerJobs = (data.careerJobs || []).filter(j => j.id !== id);
-  saveData(data);
+async function refreshCareerJobs() {
+  const btn = document.getElementById('career-sync-btn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  await loadFromRemote();
+  _careerShown = CAREER_PAGE_SIZE;
   renderCareerJobList();
-  syncToRemote();
+  if (btn) { btn.textContent = '🔄 更新'; btn.disabled = false; }
 }
 
 function renderCareerChecklist() {
@@ -4288,73 +4198,52 @@ const BOARD_TYPES = {
   info:    { label:'📌 情報',  bg:'rgba(255,255,255,0.06)', color:'var(--text3)' },
 };
 
+const SIDE_PAGE_SIZE = 5;
+let _sideShown = SIDE_PAGE_SIZE;
+
 function renderSideBoard() {
   const container = document.getElementById('side-board-list');
+  const moreWrap  = document.getElementById('side-load-more-wrap');
   if (!container) return;
   const data = loadData();
-  const items = (data.sidePosts || []).sort((a, b) => (b.pin ? 1 : 0) - (a.pin ? 1 : 0) || b.id - a.id);
-  if (!items.length) {
-    container.innerHTML = '<div style="text-align:center;padding:16px 0;font-size:13px;color:var(--text3)">案件・求人を追加してください</div>';
+  const all = (data.sidePosts || []).sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+  if (!all.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px 0;font-size:13px;color:var(--text3)">スプレッドシートから同期するとここに表示されます</div>';
+    if (moreWrap) moreWrap.style.display = 'none';
     return;
   }
-  container.innerHTML = items.map(item => {
+  const visible = all.slice(0, _sideShown);
+  container.innerHTML = visible.map(item => {
     const t = BOARD_TYPES[item.type] || BOARD_TYPES.info;
     const titleHtml = item.url
       ? `<a href="${item.url}" target="_blank" rel="noopener" style="font-size:14px;font-weight:700;color:var(--blue);text-decoration:none;word-break:break-all;display:block;margin-bottom:2px">${item.title} ↗</a>`
       : `<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px">${item.title}</div>`;
     return `<div class="card" style="margin-bottom:8px;border-left:3px solid ${t.color}">
-      <div style="display:flex;align-items:flex-start;gap:8px">
-        <span style="cursor:pointer;font-size:18px;flex-shrink:0;line-height:1.4" onclick="toggleBoardPin(${item.id})" title="ピン留め">${item.pin ? '📌' : '📋'}</span>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
-            <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${t.bg};color:${t.color};flex-shrink:0">${t.label}</span>
-            <span style="font-size:11px;color:var(--text3)">${item.date || ''}</span>
-          </div>
-          ${titleHtml}
-          ${item.note ? `<div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">${item.note}</div>` : ''}
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap">
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:${t.bg};color:${t.color};flex-shrink:0">${t.label}</span>
+          <span style="font-size:11px;color:var(--text3)">${item.date || ''}</span>
         </div>
-        <span style="cursor:pointer;color:var(--text3);font-size:18px;flex-shrink:0;line-height:1.2" onclick="deleteBoardItem(${item.id})">×</span>
+        ${titleHtml}
+        ${item.note ? `<div style="font-size:12px;color:var(--text3);line-height:1.5;margin-top:2px">${item.note}</div>` : ''}
       </div>
     </div>`;
   }).join('');
+  if (moreWrap) moreWrap.style.display = _sideShown < all.length ? 'block' : 'none';
 }
 
-function addBoardItem() {
-  const title = document.getElementById('board-title')?.value.trim();
-  if (!title) return;
-  const data = loadData();
-  if (!data.sidePosts) data.sidePosts = [];
-  data.sidePosts.push({
-    id:    Date.now(),
-    title,
-    url:   document.getElementById('board-url')?.value.trim()  || '',
-    type:  document.getElementById('board-type')?.value         || 'info',
-    note:  document.getElementById('board-note')?.value.trim()  || '',
-    date:  todayKey(),
-    pin:   false,
-  });
-  saveData(data);
-  document.getElementById('board-title').value = '';
-  document.getElementById('board-url').value   = '';
-  document.getElementById('board-note').value  = '';
-  renderSideBoard();
-  syncToRemote();
-}
-
-function toggleBoardPin(id) {
-  const data = loadData();
-  const item = (data.sidePosts || []).find(i => i.id === id);
-  if (item) item.pin = !item.pin;
-  saveData(data);
+function loadMoreSidePosts() {
+  _sideShown += SIDE_PAGE_SIZE;
   renderSideBoard();
 }
 
-function deleteBoardItem(id) {
-  const data = loadData();
-  data.sidePosts = (data.sidePosts || []).filter(i => i.id !== id);
-  saveData(data);
+async function refreshSideBoard() {
+  const btn = document.getElementById('side-sync-btn');
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  await loadFromRemote();
+  _sideShown = SIDE_PAGE_SIZE;
   renderSideBoard();
-  syncToRemote();
+  if (btn) { btn.textContent = '🔄 更新'; btn.disabled = false; }
 }
 
 // ─── IDEAS ────────────────────────────────────────────────────────────────
