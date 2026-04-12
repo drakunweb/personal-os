@@ -126,16 +126,48 @@ GASをウェブアプリとしてデプロイすると、HTTPリクエストで�
 **sheet=newjob のカラム**
 `name`（必須）, `about`, `rate_or_salary`, `platform`, `url`
 
+### デプロイ済みURL
+```
+https://script.google.com/macros/s/AKfycbwRZo4fEre-EujtnlaBBvl_TxoyOCeId12FFp2XDpDZpeG3Bc7DYu8ndDKptgYZios/exec
+```
+
 ### サンプルリクエスト
 
-```bash
-# GET でニュースを追加
-curl "https://script.google.com/macros/s/XXXXX/exec?key=drakunweb4567&sheet=news&category=tech&topic=生成AIの最新動向&about=GPT-5発表&what_for=AI活用の参考に"
+> ⚠️ **日本語パラメータは必ず `--data-urlencode` + `-G` でURLエンコードすること**
+> 直接URLに日本語を埋め込むと Google が 400 を返す。
 
-# POST で求人を追加（JSON）
-curl -X POST "https://script.google.com/macros/s/XXXXX/exec" \
-  -H "Content-Type: application/json" \
-  -d '{"key":"drakunweb4567","sheet":"newjob","name":"株式会社XXX|コンサルタント","about":"内部監査コンサル","rate_or_salary":"1200万〜","platform":"Linkedin","url":"https://..."}'
+```bash
+# ニュース追加
+curl -Ls \
+  --data-urlencode "key=drakunweb4567" \
+  --data-urlencode "sheet=news" \
+  --data-urlencode "category=tech" \
+  --data-urlencode "topic=生成AI最新動向" \
+  --data-urlencode "about=GPT-5が発表された" \
+  --data-urlencode "what_for=AI活用の参考に" \
+  -G "https://script.google.com/macros/s/AKfycbwRZo4fEre-EujtnlaBBvl_TxoyOCeId12FFp2XDpDZpeG3Bc7DYu8ndDKptgYZios/exec"
+
+# 副業案件追加
+curl -Ls \
+  --data-urlencode "key=drakunweb4567" \
+  --data-urlencode "sheet=sidebis" \
+  --data-urlencode "name=案件名" \
+  --data-urlencode "about=概要" \
+  --data-urlencode "rate_or_salary=80万/月" \
+  --data-urlencode "platform=Lancers" \
+  --data-urlencode "url=https://example.com" \
+  -G "https://script.google.com/macros/s/AKfycbwRZo4fEre-EujtnlaBBvl_TxoyOCeId12FFp2XDpDZpeG3Bc7DYu8ndDKptgYZios/exec"
+
+# 転職求人追加
+curl -Ls \
+  --data-urlencode "key=drakunweb4567" \
+  --data-urlencode "sheet=newjob" \
+  --data-urlencode "name=会社名|職種" \
+  --data-urlencode "about=業務内容" \
+  --data-urlencode "rate_or_salary=900万" \
+  --data-urlencode "platform=LinkedIn" \
+  --data-urlencode "url=https://example.com/job" \
+  -G "https://script.google.com/macros/s/AKfycbwRZo4fEre-EujtnlaBBvl_TxoyOCeId12FFp2XDpDZpeG3Bc7DYu8ndDKptgYZios/exec"
 ```
 
 ### レスポンス例
