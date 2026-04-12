@@ -95,7 +95,63 @@ KVに保存されているJSONの主要キー：
 
 ---
 
-## 5. Apps Script 運用
+## 5. Sheets Web API（外部からの行追加）
+
+GASをウェブアプリとしてデプロイすると、HTTPリクエストでシートに直接行を追加できる。
+
+### デプロイ手順（初回のみ）
+1. GAS エディタ → デプロイ → **新しいデプロイ**
+2. 種類: **ウェブアプリ**
+3. 次のユーザとして実行: **自分（オーナー）**
+4. アクセスできるユーザ: **全員**
+5. デプロイ → URLをコピー（例: `https://script.google.com/macros/s/XXXXX/exec`）
+
+> 再デプロイ（コード変更時）は「デプロイを管理」→「編集」→バージョン「新バージョン」で更新。
+
+### APIの使い方
+
+**共通パラメータ**
+| パラメータ | 説明 |
+|----------|------|
+| `key` | 認証キー: `drakunweb4567` |
+| `sheet` | `news` / `sidebis` / `newjob` |
+| `date` | `YYYY-MM-DD`（省略時: 今日） |
+
+**sheet=news のカラム**
+`category`, `topic`（必須）, `about`, `url`, `what_for`
+
+**sheet=sidebis のカラム**
+`name`（必須）, `about`, `rate_or_salary`, `platform`, `url`
+
+**sheet=newjob のカラム**
+`name`（必須）, `about`, `rate_or_salary`, `platform`, `url`
+
+### サンプルリクエスト
+
+```bash
+# GET でニュースを追加
+curl "https://script.google.com/macros/s/XXXXX/exec?key=drakunweb4567&sheet=news&category=tech&topic=生成AIの最新動向&about=GPT-5発表&what_for=AI活用の参考に"
+
+# POST で求人を追加（JSON）
+curl -X POST "https://script.google.com/macros/s/XXXXX/exec" \
+  -H "Content-Type: application/json" \
+  -d '{"key":"drakunweb4567","sheet":"newjob","name":"株式会社XXX|コンサルタント","about":"内部監査コンサル","rate_or_salary":"1200万〜","platform":"Linkedin","url":"https://..."}'
+```
+
+### レスポンス例
+```json
+// 成功
+{ "ok": true, "sheet": "news", "row": 5, "data": ["2026-04-12", "tech", "タイトル", ...] }
+
+// エラー（不明カラム）
+{ "ok": false, "error": "Unknown field(s) for sheet \"news\": [salary]. Expected columns: date, category, topic, about, url, what_for" }
+```
+
+書き込み後、`syncDB2()` が自動実行されてアプリに即時反映される。
+
+---
+
+## 6. Apps Script 運用
 
 ### デプロイ済みトリガー
 - 毎朝 3:00 に `syncToPersonalOS()` が自動実行される

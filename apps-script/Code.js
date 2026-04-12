@@ -368,6 +368,146 @@ function syncToPersonalOS() {
   Logger.log('=== 同期完了 ===');
 }
 
+// ─── Web App エンドポイント ──────────────────────────────────────────────────
+/**
+ * GET / POST でシートに新規行を追加する Web API
+ *
+ * 共通パラメータ:
+ *   key   : 認証キー (必須) — "drakunweb4567"
+ *   sheet : 書き込み先シート名 (必須) — "news" | "sidebis" | "newjob"
+ *   date  : 日付 YYYY-MM-DD (省略時: 今日の日付)
+ *
+ * sheet=news のカラム:
+ *   category, topic*, about, url, what_for
+ *   (* 必須)
+ *
+ * sheet=sidebis のカラム:
+ *   name*, about, rate_or_salary, platform, url
+ *
+ * sheet=newjob のカラム:
+ *   name*, about, rate_or_salary, platform, url
+ *
+ * レスポンス (JSON):
+ *   成功: { ok: true,  sheet, row, data }
+ *   失敗: { ok: false, error }
+ *
+ * デプロイ手順:
+ *   GAS エディタ → デプロイ → 新しいデプロイ
+ *   種類: ウェブアプリ / 次のユーザとして実行: 自分 / アクセス: 全員
+ */
+
+const WEB_API_KEY = 'drakunweb4567';
+
+// シート定義: columns 順序 = シートの列順序と一致させること
+const SHEET_SCHEMAS = {
+  news: {
+    columns:  ['date', 'category', 'topic', 'about', 'url', 'what_for'],
+    required: ['topic'],
+  },
+  sidebis: {
+    columns:  ['date', 'name', 'about', 'rate_or_salary', 'platform', 'url'],
+    required: ['name'],
+  },
+  newjob: {
+    columns:  ['date', 'name', 'about', 'rate_or_salary', 'platform', 'url'],
+    required: ['name'],
+  },
+};
+
+function handleWebRequest(params) {
+  // ── 認証 ──
+  if ((params.key || '') !== WEB_API_KEY) {
+    return jsonResponse({ ok: false, error: 'Unauthorized: invalid key' });
+  }
+
+  // ── シート名チェック ──
+  const sheetName = String(params.sheet || '').toLowerCase().trim();
+  const schema = SHEET_SCHEMAS[sheetName];
+  if (!schema) {
+    return jsonResponse({
+      ok: false,
+      error: `Unknown sheet: "${sheetName}". Allowed: ${Object.keys(SHEET_SCHEMAS).join(', ')}`,
+    });
+  }
+
+  // ── 不明カラムチェック（タイポ防止） ──
+  const knownFields = new Set(['key', 'sheet', ...schema.columns]);
+  const unknownFields = Object.keys(params).filter(k => !knownFields.has(k));
+  if (unknownFields.length) {
+    return jsonResponse({
+      ok: false,
+      error: `Unknown field(s) for sheet "${sheetName}": [${unknownFields.join(', ')}]. `
+           + `Expected columns: ${schema.columns.join(', ')}`,
+    });
+  }
+
+  // ── 必須フィールドチェック ──
+  const missingFields = schema.required.filter(f => !String(params[f] || '').trim());
+  if (missingFields.length) {
+    return jsonResponse({
+      ok: false,
+      error: `Missing required field(s): ${missingFields.join(', ')}`,
+    });
+  }
+
+  // ── 行データ組み立て（列順を schema.columns に合わせる） ──
+  const today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
+  const row = schema.columns.map(col => {
+    if (col === 'date') return String(params.date || today).trim();
+    return String(params[col] || '').trim();
+  });
+
+  // ── シートに追記 ──
+  let ss;
+  try {
+    ss = SpreadsheetApp.openById(DB2_ID);
+  } catch (e) {
+    return jsonResponse({ ok: false, error: 'Cannot open spreadsheet: ' + e.message });
+  }
+
+  const sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    return jsonResponse({ ok: false, error: `Sheet "${sheetName}" not found in spreadsheet` });
+  }
+
+  sheet.appendRow(row);
+  const rowNum = sheet.getLastRow();
+  Logger.log(`[WebAPI] ${sheetName} 行${rowNum} 追加: ${JSON.stringify(row)}`);
+
+  // ── KVに即時反映（DB2同期） ──
+  try { syncDB2(); } catch (e) { Logger.log('syncDB2 エラー: ' + e.message); }
+
+  return jsonResponse({ ok: true, sheet: sheetName, row: rowNum, data: row });
+}
+
+function jsonResponse(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// GET リクエスト: ?sheet=news&key=xxx&topic=...
+function doGet(e) {
+  return handleWebRequest(e.parameter || {});
+}
+
+// POST リクエスト: JSON body or application/x-www-form-urlencoded
+function doPost(e) {
+  let params = {};
+  if (e.postData) {
+    if (e.postData.type === 'application/json') {
+      try { params = JSON.parse(e.postData.contents); } catch (_) {
+        return jsonResponse({ ok: false, error: 'Invalid JSON body' });
+      }
+    } else {
+      params = e.parameter || {};
+    }
+  } else {
+    params = e.parameter || {};
+  }
+  return handleWebRequest(params);
+}
+
 // ─── 時間トリガー設定（1日1回 午前3時に自動同期）───────────────────────────
 function setupDailyTrigger() {
   // 既存トリガーを削除
