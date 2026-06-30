@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume — Fabian Ryuhei Berg Jürgensen</title>
+<style>
+  @page { size: A4; margin: 14mm 16mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1f2933;
+    font-size: 10.3pt;
+    line-height: 1.45;
+  }
+  /* ---- Header ---- */
+  header { border-bottom: 2.5px solid #1a3c5e; padding-bottom: 10px; margin-bottom: 16px; }
+  h1 {
+    font-size: 23pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #14334f;
+  }
+  .tagline {
+    font-size: 10.5pt;
+    color: #2a6099;
+    font-weight: 600;
+    margin-top: 3px;
+  }
+  .contact {
+    font-size: 9pt;
+    color: #52606d;
+    margin-top: 7px;
+  }
+  .contact span { white-space: nowrap; }
+  .contact .sep { color: #b0bac4; margin: 0 7px; }
+  /* ---- Sections ---- */
+  section { margin-bottom: 14px; }
+  h2 {
+    font-size: 10.5pt;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #14334f;
+    border-bottom: 1px solid #cdd6e0;
+    padding-bottom: 3px;
+    margin-bottom: 8px;
+  }
+  p.summary { text-align: justify; }
+  /* ---- Experience entries ---- */
+  .entry { margin-bottom: 11px; }
+  .entry:last-child { margin-bottom: 0; }
+  .entry-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .entry-org { font-weight: 700; font-size: 10.8pt; color: #1f2933; }
+  .entry-loc { font-size: 9pt; color: #52606d; }
+  .entry-sub { display: flex; justify-content: space-between; align-items: baseline; margin-top: 1px; }
+  .entry-role { font-style: italic; color: #2a6099; font-size: 10pt; }
+  .entry-date { font-size: 9pt; color: #52606d; white-space: nowrap; }
+  ul { list-style: none; margin-top: 5px; }
+  ul li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 3px;
+  }
+  ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: #2a6099;
+    font-size: 8pt;
+    top: 1px;
+  }
+  /* ---- Two-column competencies ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 24px;
+  }
+  .grid div { padding-left: 14px; position: relative; margin-bottom: 2px; }
+  .grid div::before {
+    content: "▪"; position: absolute; left: 0; color: #2a6099; font-size: 9pt;
+  }
+  /* ---- Certifications / inline lists ---- */
+  .cert { margin-bottom: 4px; padding-left: 14px; position: relative; }
+  .cert::before { content: "▪"; position: absolute; left: 0; color: #2a6099; }
+  .cert b { color: #1f2933; }
+  .muted { color: #6b7682; }
+  .ph { color: #9aa5b1; font-style: italic; }
+  .langrow { display: flex; gap: 36px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Fabian Ryuhei Berg Jürgensen</h1>
+  <div class="tagline">USCPA · Audit Professional at Deloitte Tohmatsu · Accounting × AI Automation</div>
+  <div class="contact">
+    <span>Tokyo, Japan</span><span class="sep">|</span>
+    <span>drakunweb@gmail.com</span><span class="sep">|</span>
+    <span>linkedin.com/in/fabianryuheibergiurgensen</span>
+  </div>
+</header>
+
+<section>
+  <h2>Professional Summary</h2>
+  <p class="summary">
+    USCPA-qualified audit professional in the second year at Deloitte Tohmatsu LLC, a Big Four
+    assurance firm, specializing in statutory financial-statement audits and internal control
+    evaluation. Combines a solid foundation in accounting, auditing, and business English with
+    hands-on experience automating professional workflows using AI tools (Claude Code, ChatGPT,
+    and MCP integrations). Previously operated independently as a freelance professional.
+    Currently pursuing the Certified Internal Auditor (CIA) credential to deepen internal-control
+    expertise.
+  </p>
+</section>
+
+<section>
+  <h2>Core Competencies</h2>
+  <div class="grid">
+    <div>Statutory &amp; Financial-Statement Audit</div>
+    <div>Internal Control Evaluation (J-SOX / ICFR)</div>
+    <div>US GAAP &amp; Accounting Standards</div>
+    <div>Business English &amp; English Accounting</div>
+    <div>AI Workflow Automation (Claude Code, MCP)</div>
+    <div>Data &amp; Document Automation (Excel/CSV/PDF)</div>
+    <div>SME Business Planning</div>
+    <div>Government Subsidy Applications</div>
+  </div>
+</section>
+
+<section>
+  <h2>Professional Experience</h2>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="entry-org">Deloitte Tohmatsu LLC (Deloitte Touche Tohmatsu)</span>
+      <span class="entry-loc">Tokyo, Japan</span>
+    </div>
+    <div class="entry-sub">
+      <span class="entry-role">Audit Associate — Assurance</span>
+      <span class="entry-date"><span class="ph">[20XX]</span> – Present</span>
+    </div>
+    <ul>
+      <li>Perform statutory financial-statement audits as a member of engagement teams, executing
+          substantive testing, analytical procedures, and audit documentation.</li>
+      <li>Evaluate internal control over financial reporting (ICFR / J-SOX), assessing design and
+          operating effectiveness of key controls.</li>
+      <li>Build AI-assisted automation for recurring audit tasks — workpaper preparation,
+          prior-year comparison, and data formatting — improving team efficiency.</li>
+      <li>Coordinate with clients and team members to deliver audit deliverables on schedule,
+          including English-language accounting matters.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="entry-org">Independent Freelance Professional</span>
+      <span class="entry-loc"><span class="ph">[Location]</span></span>
+    </div>
+    <div class="entry-sub">
+      <span class="entry-role">Self-Employed — Accounting &amp; Business Support</span>
+      <span class="entry-date"><span class="ph">[20XX] – [20XX]</span> (approx. 6 months)</span>
+    </div>
+    <ul>
+      <li>Provided accounting and business-planning support to small and medium-sized enterprises.</li>
+      <li>Supported preparation of business plans and government subsidy applications, including
+          work related to Nakagawa Japan Co., Ltd.</li>
+      <li>Applied AI automation to streamline document creation and data processing for clients.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Certifications</h2>
+  <div class="cert"><b>U.S. Certified Public Accountant (USCPA)</b> — Passed all examination sections</div>
+  <div class="cert"><b>Certified Internal Auditor (CIA)</b> — In progress <span class="muted">(target 2026–2027)</span></div>
+  <div class="cert"><b>TOEIC</b> — <span class="ph">[score — to confirm]</span></div>
+</section>
+
+<section>
+  <h2>Education</h2>
+  <div class="entry">
+    <div class="entry-head">
+      <span class="entry-org"><span class="ph">[University Name]</span></span>
+      <span class="entry-loc"><span class="ph">[Location]</span></span>
+    </div>
+    <div class="entry-sub">
+      <span class="entry-role"><span class="ph">[Degree, e.g. B.A. in Accounting / Commerce]</span></span>
+      <span class="entry-date"><span class="ph">[20XX] – [20XX]</span></span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Technical Skills</h2>
+  <p>Claude Code · ChatGPT · MCP (Model Context Protocol) integrations · Excel / CSV automation ·
+     PDF data extraction · workflow &amp; reporting automation
+     <span class="ph">· Python / SQL (learning)</span></p>
+</section>
+
+<section>
+  <h2>Languages</h2>
+  <div class="langrow">
+    <div class="cert"><b>Japanese</b> — Native</div>
+    <div class="cert"><b>English</b> — Business proficiency</div>
+  </div>
+</section>
+
+</body>
+</html>
